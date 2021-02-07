@@ -7,6 +7,7 @@ window.onload = function () {
     // 【main-script】 を実行
 
     getJsonp_GAS();
+    
     /*
     const data = load_data();
     ml_members_data = process_raw_data(data);
@@ -24,18 +25,64 @@ function getJsonp_GAS() {
         jsonpCallback: 'jsondata',
         success: function (json) {
             save_data(json);
-            ml_members_data = process_raw_data(json);
+            ml_members_data = ml_members_data.concat(process_raw_data(json));
             init_menu();
             const idol1 = getParam('idol1');
             const idol2 = getParam('idol2');
-            console.log(idol1);
+
             update_content(idol1, idol2);
+            get_4koma_Jsonp_GAS();
 
             
         }
     });
 }
+function get_4koma_Jsonp_GAS() {
+    $.ajax({
+        type: 'GET',
+        url: 'https://script.google.com/macros/s/AKfycbxpOMNXs_wQA0H-i2Y3KXlTOa-fMKz6ltr1eUwMCD8LQJ94QDsg8GEY/exec',
+        dataType: 'jsonp',
+        jsonpCallback: 'jsondata',
+        success: function (json) {
+            let yonkoma_list = [];
+            for (let i = 0; i < json.length; i++){
+                const story = json[i];
+                if (story['タイトル'].length < 1) continue;
+                let idol = [];
+                //アイドルを追加
+                for (let j=0; j<7; j++){
+                    const key = '登場人物' + (j+1);
+                    if (story[key].length < 1) continue;
+                    idol.push(story[key]);
+                }
+                //社長、プロデューサー、そらさんを追加
+                const staffs = ['社長', 'プロデューサー', 'そら'];
+                for (let staff of staffs){
+                    if (story[staff] != ''){
+                        idol.push(staff);
+                    }
+                }
+                yonkoma_list.push({
+                    type: '漫画',
+                    group: '4コマ',
+                    section: '',
+                    title: story['タイトル'],
+                    members: idol,
+                    url: story['URL'],
+                    view: 'ナビ＞コミック＞4コマ, Twitter',
+                    mv: '',
+                });
 
+            }
+            ml_members_data = ml_members_data.concat(yonkoma_list);
+            init_menu();
+            const idol1 = getParam('idol1');
+            const idol2 = getParam('idol2');
+            update_content(idol1, idol2);
+
+        }
+    });
+}
 function save_data(data){
     localStorage.setItem('ml_members', JSON.stringify(data));
 }
