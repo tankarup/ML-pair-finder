@@ -74,6 +74,7 @@ function process_raw_data(json){
             members: members,
             url: event['URL'],
             view: event['閲覧'],
+            mv: event['MV'],
         });
     }
     return processed;
@@ -112,6 +113,56 @@ function init_menu(){
     document.getElementById('idols2').innerHTML = '<option value="">登場人物2</option>' + options_html;
 
 }
+//https://www-creators.com/archives/4463
+function getParam(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function youtube_img(url){
+    if (url.indexOf('www.youtube.com') > -1){
+        const v = getParam('v', url);
+        return (v ? `http://img.youtube.com/vi/${v}/2.jpg` : null);
+    }
+    if (url.indexOf('youtu.be') > -1){
+        const match = url.match(/youtu\.be\/([^?]*)/)
+        //https://youtu.be/SbDazb8934I?t=112
+        return (match[1] ? `http://img.youtube.com/vi/${match[1]}/2.jpg` : null);
+    }
+    return null;
+
+}
+
+function get_link_str(url, text){
+    const img = youtube_img(url);
+    return (img ? `<img src="${img}">` : text);
+}
+
+function content_link(content, key){
+
+    let crlf = false;
+    let title = content[key];
+    if (title.length < 2) crlf = true;
+
+    if (content.url.length > 1){
+        const link_str = get_link_str(content.url, '<img src="open.png" style="width: 16px; height:16px;">');
+        if (!crlf) title += '<br>';
+        title += ` <a target="_blank" href="${content.url}">${link_str}</a>`;
+        crlf = true;
+    }
+    if (content.mv.length > 1){
+        const link_str = get_link_str(content.mv, '[MV]');
+        if (!crlf) title += '<br>';
+        title += ` <a target="_blank" href="${content.mv}">${link_str}</a>`;
+    }
+
+    return title;
+}
 
 function update_content(idol1, idol2){
     let html = '';
@@ -131,12 +182,8 @@ function update_content(idol1, idol2){
 
         if ((content.members.indexOf(idol1) >= 0 || idol1 == '') && (content.members.indexOf(idol2) >= 0 || idol2 == '')){
             //URLデータがあるものはリンクをはる
-            let title = "";
-            if (content.url.length < 2){
-                title = content.title;
-            } else {
-                title = `<a target="_blank" href="${content.url}">${content.title}</a>`;
-            }
+            let view = content_link(content, 'view');
+
             //フィルター対象アイドルの名前を強調
             let members_str = content.members.join(', ');
             if (idol1.length > 0) members_str = members_str.replace(idol1, `<b>${idol1}</b>`);
@@ -146,9 +193,9 @@ function update_content(idol1, idol2){
             <tr>
                 <td>${content.type}</td>
                 <td>${content.group}</td>
-                <td>${title}</td>
+                <td>${content.title}</td>
                 <td>${members_str}</td>
-                <td>${content.view}</td>
+                <td>${view}</td>
             </tr>`;
         }
     }
