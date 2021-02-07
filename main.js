@@ -59,9 +59,12 @@ function process_raw_data(json){
     for (let i = 0; i < json.length; i++){
         const event = json[i];
         let members = [];
-        for (let j = 1; j < 7; j++){
+        for (let j = 1; j < 10; j++){
             const members_str = event['登場人物' + j];
-            members = members.concat(members_str.split(/[、,・\n]/));
+            if (members_str) {
+                members = members.concat(members_str.split(/[、,・\n]/));
+            }
+
         }
         members = members.filter(v => v);
         members = members.map(function(item){
@@ -70,6 +73,7 @@ function process_raw_data(json){
         processed.push({
             type: event['種類'],
             group: event['グループ'],
+            section: event['セクション'],
             title: event['タイトル'],
             members: members,
             url: event['URL'],
@@ -169,7 +173,7 @@ function update_content(idol1, idol2){
     html += '<table class="table table-sm table-striped">'
     html += `<thead class="thead-dark">
                 <tr>
-                    <th>カテゴリー</th>
+                    <th>種類</th>
                     <th>イベント</th>
                     <th>タイトル</th>
                     <th>メンバー</th>
@@ -193,7 +197,7 @@ function update_content(idol1, idol2){
             <tr>
                 <td>${content.type}</td>
                 <td>${content.group}</td>
-                <td>${content.title}</td>
+                <td>${content.title} ${content.section}</td>
                 <td>${members_str}</td>
                 <td>${view}</td>
             </tr>`;
