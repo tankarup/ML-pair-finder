@@ -26,7 +26,10 @@ function getJsonp_GAS() {
             save_data(json);
             ml_members_data = process_raw_data(json);
             init_menu();
-            update_content('', '');
+            const idol1 = getParam('idol1');
+            const idol2 = getParam('idol2');
+            console.log(idol1);
+            update_content(idol1, idol2);
 
             
         }
@@ -168,7 +171,11 @@ function content_link(content, key){
     return title;
 }
 
-function update_content(idol1, idol2){
+function update_content(idol1_name, idol2_name){
+    const idol1 = idol1_name ? idol1_name : '';
+    const idol2 = idol2_name ? idol2_name : '';
+    document.getElementById('idols1').value = idol1;
+    document.getElementById('idols2').value = idol2;
     let html = '';
     html += '<table class="table table-sm table-striped">'
     html += `<thead class="thead-dark">
@@ -184,14 +191,14 @@ function update_content(idol1, idol2){
 
     for (let content of  ml_members_data){
 
-        if ((content.members.indexOf(idol1) >= 0 || idol1 == '') && (content.members.indexOf(idol2) >= 0 || idol2 == '')){
+        if ((content.members.indexOf(idol1) >= 0 || !idol1) && (content.members.indexOf(idol2) >= 0 || !idol2)){
             //URLデータがあるものはリンクをはる
             let view = content_link(content, 'view');
 
             //フィルター対象アイドルの名前を強調
             let members_str = content.members.join(', ');
-            if (idol1.length > 0) members_str = members_str.replace(idol1, `<b>${idol1}</b>`);
-            if (idol2.length > 0) members_str = members_str.replace(idol2, `<b>${idol2}</b>`);
+            if (idol1) members_str = members_str.replace(idol1, `<b>${idol1}</b>`);
+            if (idol2) members_str = members_str.replace(idol2, `<b>${idol2}</b>`);
 
             html += `
             <tr>
