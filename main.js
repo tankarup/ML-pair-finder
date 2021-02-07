@@ -62,7 +62,7 @@ function process_raw_data(json){
         for (let j = 1; j < 10; j++){
             const members_str = event['登場人物' + j];
             if (members_str) {
-                members = members.concat(members_str.split(/[、,・\n]/));
+                members = members.concat(members_str.split(/[、,・，\n]/));
             }
 
         }
