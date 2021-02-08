@@ -126,7 +126,7 @@ function process_raw_data(json){
             section: event['セクション'],
             title: event['タイトル'],
             members: members,
-            url: event['URL'],
+            url: event['Music'],
             view: event['閲覧'],
             mv: event['MV'],
         });
