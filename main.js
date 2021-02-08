@@ -66,6 +66,7 @@ function get_4koma_Jsonp_GAS() {
                     type: '漫画',
                     group: '4コマ',
                     section: '',
+                    subtitle: '',
                     title: story['タイトル'],
                     members: idol,
                     url: story['URL'],
@@ -123,8 +124,9 @@ function process_raw_data(json){
         processed.push({
             type: event['種類'],
             group: event['グループ'],
-            section: event['セクション'],
             title: event['タイトル'],
+            section: event['話数'],
+            subtitle: event['サブタイトル'],
             members: members,
             url: event['Music'],
             view: event['閲覧'],
@@ -251,7 +253,7 @@ function update_content(idol1_name, idol2_name){
             <tr>
                 <td>${content.type}</td>
                 <td>${content.group}</td>
-                <td>${content.title} ${content.section}</td>
+                <td>${content.title} ${content.section} ${content.subtitle}</td>
                 <td>${members_str}</td>
                 <td>${view}</td>
             </tr>`;
