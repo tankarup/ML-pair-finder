@@ -245,9 +245,17 @@ function update_content(idol1_name, idol2_name){
             let view = content_link(content, 'view');
 
             //フィルター対象アイドルの名前を強調
-            let members_str = content.members.join(', ');
-            if (idol1) members_str = members_str.replace(idol1, `<b>${idol1}</b>`);
-            if (idol2) members_str = members_str.replace(idol2, `<b>${idol2}</b>`);
+            let members_str = '';
+            for (let member of content.members){
+                if (member == idol1 || member == idol2){
+                    members_str += `<b>${member}</b>`;
+                } else {
+                    members_str += member;
+                }
+                members_str += ', ';
+            }
+            //最後に付けた', 'を削除
+            members_str = members_str.slice(0, -2);
 
             html += `
             <tr>
@@ -266,136 +274,77 @@ function update_content(idol1_name, idol2_name){
 }
 
 function normalize_name(name){
-    const long_name = `天海春香
-    如月千早
-    星井美希
-    萩原雪歩
-    高槻やよい
-    菊地真
-    水瀬伊織
-    四条貴音
-    秋月律子
-    三浦あずさ
-    双海亜美
-    双海真美
-    我那覇響
-    春日未来
-    最上静香
-    伊吹翼
-    田中琴葉
-    島原エレナ
-    佐竹美奈子
-    所恵美
-    徳川まつり
-    箱崎星梨花
-    野々原茜
-    望月杏奈
-    ロコ
-    七尾百合子
-    高山紗代子
-    松田亜利沙
-    高坂海美
-    中谷育
-    天空橋朋花
-    エミリー
-    北沢志保
-    舞浜歩
-    木下ひなた
-    矢吹可奈
-    横山奈緒
-    二階堂千鶴
-    馬場このみ
-    大神環
-    豊川風花
-    宮尾美也
-    福田のり子
-    真壁瑞希
-    篠宮可憐
-    百瀬莉緒
-    永吉昴
-    北上麗花
-    周防桃子
-    ジュリア
-    白石紬
-    桜守歌織
-    音無小鳥
-    青羽美咲
+    const idol_names = `
+    春香,天海春香
+    千早,如月千早
+    美希,星井美希
+    雪歩,萩原雪歩
+    やよい,高槻やよい
+    真,菊地真
+    伊織,水瀬伊織
+    貴音,四条貴音
+    律子,秋月律子
+    あずさ,三浦あずさ
+    亜美,双海亜美
+    真美,双海真美
+    響,我那覇響
+    未来,春日未来
+    静香,最上静香
+    翼,伊吹翼
+    琴葉,田中琴葉
+    エレナ,島原エレナ
+    美奈子,佐竹美奈子
+    恵美,所恵美
+    まつり,徳川まつり
+    星梨花,箱崎星梨花
+    茜,野々原茜
+    杏奈,望月杏奈
+    ロコ,ロコ
+    百合子,七尾百合子
+    紗代子,高山紗代子
+    亜利沙,松田亜利沙
+    海美,高坂海美
+    育,中谷育
+    朋花,天空橋朋花
+    エミリー,エミリー
+    志保,北沢志保
+    歩,舞浜歩
+    ひなた,木下ひなた
+    可奈,矢吹可奈
+    奈緒,横山奈緒
+    千鶴,二階堂千鶴
+    このみ,馬場このみ
+    環,大神環
+    風花,豊川風花
+    美也,宮尾美也
+    のり子,福田のり子
+    瑞希,真壁瑞希
+    可憐,篠宮可憐
+    莉緒,百瀬莉緒
+    昴,永吉昴
+    麗花,北上麗花
+    桃子,周防桃子
+    ジュリア,ジュリア
+    紬,白石紬
+    歌織,桜守歌織
+    小鳥,音無小鳥
+    美咲,青羽美咲
+    社長,高木順二朗
+    劇子,劇場の魂
+    
     `;
-    const short_name = `
-    春香
-千早
-美希
-雪歩
-やよい
-真
-伊織
-貴音
-律子
-あずさ
-亜美
-真美
-響
-未来
-静香
-翼
-琴葉
-エレナ
-美奈子
-恵美
-まつり
-星梨花
-茜
-杏奈
-ロコ
-百合子
-紗代子
-亜利沙
-海美
-育
-朋花
-エミリー
-志保
-歩
-ひなた
-可奈
-奈緒
-千鶴
-このみ
-環
-風花
-美也
-のり子
-瑞希
-可憐
-莉緒
-昴
-麗花
-桃子
-ジュリア
-紬
-歌織
-小鳥
-美咲
-    `;
-    const l_names = multiline_string_to_list(long_name);
-    const s_names = multiline_string_to_list(short_name);
 
-    for (let i = 0; i < l_names.length; i++){
-        const idol_name = l_names[i];
-        if (name.startsWith(idol_name)){
-            return s_names[i];
+    let idols = idol_names.split('\n');
+    for (let idol of idols){
+        let names = idol.split(',');
+        names = names.map(function(name){
+            return name.trim();
+        });
+        for (let i = 1; i < names.length; i++){
+            if (name.startsWith(names[i])){
+                return names[0];
+            }
         }
-        
     }
     return name;
-}
-
-function multiline_string_to_list(string){
-    let members = string.split('\n');
-    members = members.map(function(item){
-    	return item.trim();
-    });
-    members = members.filter(v => v);
-
-    return members;
 }
