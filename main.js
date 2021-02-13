@@ -1,6 +1,7 @@
 //https://www.koreyome.com/make-spreadsheet-to-json-at-google-apps-script/
 
 let ml_members_data = [];
+let chart;
 
 // ページ読み込み後の処理
 window.onload = function () {
@@ -167,7 +168,7 @@ function init_menu(){
 
     document.getElementById('idols1').innerHTML = '<option value="">登場人物1</option>' + options_html;
     document.getElementById('idols2').innerHTML = '<option value="">登場人物2</option>' + options_html;
-
+    init_graph();
 }
 //https://www-creators.com/archives/4463
 function getParam(name, url) {
@@ -237,10 +238,11 @@ function update_content(idol1_name, idol2_name){
                 </tr>
             </thead>
             <tbody class="">`;
-
+    let filtered_contents = [];
     for (let content of  ml_members_data){
 
         if ((content.members.indexOf(idol1) >= 0 || !idol1) && (content.members.indexOf(idol2) >= 0 || !idol2)){
+            filtered_contents.push(content);
             //URLデータがあるものはリンクをはる
             let view = content_link(content, 'view');
 
@@ -271,6 +273,171 @@ function update_content(idol1_name, idol2_name){
         </tbody>
     </table>`;
     document.getElementById('whole').innerHTML = html;
+    update_graph(filtered_contents);
+}
+function init_graph(){
+
+    chart = Highcharts.chart('graph-container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '登録データ数'
+        },
+        subtitle: {
+            text: '註：各データの粒度が違うので数値の比較はできません'
+        },
+        xAxis: {
+            categories: []
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'データ数'
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: ( // theme
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                    ) || 'gray'
+                }
+            }
+        },
+        legend: {
+            align: 'right',
+            x: -30,
+            verticalAlign: 'top',
+            y: 70,
+            floating: true,
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: false
+                }
+            }
+        },
+        series: [{}]
+    });
+}
+
+function content_type_list(contents){
+    //種類の一覧を作成
+    let type_names = [];
+    for (let content of contents){
+        const type_name = content.type;
+        if (type_names.indexOf(type_name) == -1){
+            type_names.push(type_name);
+        }
+    }
+    return type_names;
+}
+
+function idol_name_list(contents){
+    //アイドルの名前一覧を作成
+    let idol_list = [];
+    for (let content of contents){
+        idol_list = idol_list.concat(content.members);
+    }
+    //アイドルの名前一覧
+    const idol_names = idol_list.filter(function (x, i, self) {
+        return self.indexOf(x) === i;
+    });
+
+    return idol_names;
+}
+
+function update_graph(contents){
+    while(chart.series.length > 0)
+        chart.series[0].remove(true);
+
+
+    const type_names = content_type_list(contents);
+    const count_list = toCountList(contents);
+
+    let idol_names = [];
+    for (let item of count_list){
+        idol_names.push(item.name);
+    }
+    //document.getElementById('graph').innerHTML = JSON.stringify(toCountList(idol_list));
+
+    chart.xAxis[0].setCategories(idol_names);
+    //chart.series[0].data[0].update({y: 80000});
+    let new_series = {};
+    for (let type_name of type_names){
+        let new_data = [];
+        for (let item of count_list){
+            new_data.push(item[type_name]);
+        }
+        chart.addSeries({
+            name: type_name,
+            data: new_data,
+        });
+    }
+    chart.redraw();
+
+}
+
+/*
+    [{
+        name: ロコ,
+        total: 10,
+        漫画: 3,
+        ドラマCD: 5,
+    }]
+*/
+function toCountList(contents) {
+
+    //アイドルの名前一覧
+    const idol_list = idol_name_list(contents);
+
+    //種類の一覧を作成
+    let type_names = content_type_list(contents);
+
+    //辞書形式で種類ごとにデータ個数をカウント
+    let count_dic = {};
+    //辞書の初期化
+    for (let idol_name of idol_list){
+        count_dic[idol_name] = {};
+        for (let type of type_names){
+            count_dic[idol_name][type] = 0;
+        }
+        count_dic[idol_name]['total'] = 0;
+    }
+    //カウント
+    for (let content of contents){
+        for (let idol_name of content.members){
+            count_dic[idol_name][content.type] += 1;
+            count_dic[idol_name]['total'] += 1;
+        }
+    }
+    //console.log(count_dic);
+    //データを並べ替えたいので配列に変更
+    let count_list = [];
+    for (let key in count_dic){
+        let new_list = count_dic[key];
+        new_list['name'] = key;
+        count_list.push(new_list);
+    }
+
+
+    count_list.sort(function(a,b){
+        if( a.total > b.total ) return -1;
+        if( a.total < b.total ) return 1;
+        return 0;
+    });
+
+    return count_list;
 }
 
 function normalize_name(name){
