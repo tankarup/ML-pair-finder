@@ -97,9 +97,12 @@ function load_data(){
 function idol_changed(){
     const idol1 = document.getElementById('idols1').value;
     const idol2 = document.getElementById('idols2').value;
-    update_content(idol1, idol2);
+    const type = document.getElementById('type').value;
+    update_content(idol1, idol2, type);
 }
-
+document.getElementById('type').addEventListener('change', function(){
+    idol_changed();
+});
 document.getElementById('idols1').addEventListener('change', function(){
     idol_changed();
 });
@@ -136,6 +139,27 @@ function process_raw_data(json){
     }
     return processed;
 }
+
+function get_type_list(data){
+    let type_list = [];
+    for (let item of data){
+        const type = item.type;
+        if (!type) continue;
+        if (type_list.indexOf(type) < 0){
+            type_list.push(type);
+        }
+    }
+    return type_list;
+}
+
+function add_type_menu(type_list){
+    let options_html = '';
+    for (let type of type_list){
+        options_html += `<option value="${type}">${type}</option>`;
+    }
+    document.getElementById('type').innerHTML = '<option value="">種類</option>' + options_html;
+}
+
 function get_person_list(data, key){
     let persons = [];
     for (let i = 0; i< data.length; i++){
@@ -168,6 +192,9 @@ function init_menu(){
 
     document.getElementById('idols1').innerHTML = '<option value="">登場人物1</option>' + options_html;
     document.getElementById('idols2').innerHTML = '<option value="">登場人物2</option>' + options_html;
+
+    add_type_menu(get_type_list(ml_members_data));
+
     init_graph();
 }
 //https://www-creators.com/archives/4463
@@ -221,11 +248,13 @@ function content_link(content, key){
     return title;
 }
 
-function update_content(idol1_name, idol2_name){
+function update_content(idol1_name, idol2_name, type_str){
     const idol1 = idol1_name ? idol1_name : '';
     const idol2 = idol2_name ? idol2_name : '';
+    const type = type_str ? type_str : '';
     document.getElementById('idols1').value = idol1;
     document.getElementById('idols2').value = idol2;
+    document.getElementById('type').value = type;
     let html = '';
     html += '<table class="table table-sm table-striped">'
     html += `<thead class="thead-dark">
@@ -241,7 +270,7 @@ function update_content(idol1_name, idol2_name){
     let filtered_contents = [];
     for (let content of  ml_members_data){
 
-        if ((content.members.indexOf(idol1) >= 0 || !idol1) && (content.members.indexOf(idol2) >= 0 || !idol2)){
+        if ((content.members.indexOf(idol1) >= 0 || !idol1) && (content.members.indexOf(idol2) >= 0 || !idol2) && (content.type.indexOf(type) >= 0 || !type)){
             filtered_contents.push(content);
             //URLデータがあるものはリンクをはる
             let view = content_link(content, 'view');
@@ -293,7 +322,7 @@ function init_graph(){
         yAxis: {
             min: 0,
             title: {
-                text: 'データ数'
+                text: '登録データ数'
             },
             stackLabels: {
                 enabled: true,

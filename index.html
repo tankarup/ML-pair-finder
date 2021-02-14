@@ -30,9 +30,10 @@
             //font-weight:bold;
         }
 
-        #idols1, #idols2 , #drawers, option{
+        #idols1, #idols2 , #type, #drawers, option{
             max-width: 80px;
         }
+
 
         .highcharts-figure, .highcharts-data-table table {
             min-width: 310px;
@@ -47,6 +48,10 @@
         <h1 class="h3">ミリシタアイドル カプ検索</h1>
 
         <div >
+            <select id="type">
+                <option value="">種類</option>
+            </select>
+            
             <select id="idols1">
                 <option value="">登場人物1</option>
             </select>
@@ -56,7 +61,7 @@
         </div>
 
     </nav>
-
+    
     <div id="whole">
         <!-- // -->
     </div>
