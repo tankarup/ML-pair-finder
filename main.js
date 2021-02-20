@@ -256,7 +256,7 @@ function update_content(idol1_name, idol2_name, type_str){
     document.getElementById('idols2').value = idol2;
     document.getElementById('type').value = type;
     let html = '';
-    html += '<table class="table table-sm table-striped">'
+    html += '<table class="table table-sm table-striped">'; //
     html += `<thead class="thead-dark">
                 <tr>
                     <th>種類</th>
@@ -288,11 +288,15 @@ function update_content(idol1_name, idol2_name, type_str){
             //最後に付けた', 'を削除
             members_str = members_str.slice(0, -2);
 
+            let title = content.title;
+            if (content.section.length > 0) title += `, ${content.section}`;
+            if (content.subtitle.length > 0) title += `, ${content.subtitle}`;
+
             html += `
             <tr>
                 <td>${content.type}</td>
                 <td>${content.group}</td>
-                <td>${content.title} ${content.section} ${content.subtitle}</td>
+                <td>${title}</td>
                 <td>${members_str}</td>
                 <td>${view}</td>
             </tr>`;
