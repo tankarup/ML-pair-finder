@@ -255,7 +255,9 @@ function update_content(idol1_name, idol2_name, type_str){
     document.getElementById('idols1').value = idol1;
     document.getElementById('idols2').value = idol2;
     document.getElementById('type').value = type;
+    
     let html = '';
+    /*
     html += '<table class="table table-sm table-striped">'; //
     html += `<thead class="thead-dark">
                 <tr>
@@ -267,6 +269,7 @@ function update_content(idol1_name, idol2_name, type_str){
                 </tr>
             </thead>
             <tbody class="">`;
+    */
     let filtered_contents = [];
     for (let content of  ml_members_data){
 
@@ -292,6 +295,9 @@ function update_content(idol1_name, idol2_name, type_str){
             if (content.section.length > 0) title += `, ${content.section}`;
             if (content.subtitle.length > 0) title += `, ${content.subtitle}`;
 
+
+
+
             html += `
             <tr>
                 <td>${content.type}</td>
@@ -300,12 +306,22 @@ function update_content(idol1_name, idol2_name, type_str){
                 <td>${members_str}</td>
                 <td>${view}</td>
             </tr>`;
+
+            //-----
+
+            
+            //-----
         }
     }
+    /*
     html += `
         </tbody>
     </table>`;
     document.getElementById('whole').innerHTML = html;
+    */
+   let tbody = document.getElementById('pairs-table-body');
+   tbody.innerHTML = '';
+   tbody.insertAdjacentHTML('beforeend', html);
     update_graph(filtered_contents);
 }
 function init_graph(){
@@ -511,7 +527,7 @@ const idol_names = `
 星梨花,箱崎星梨花
 茜,野々原茜
 杏奈,望月杏奈
-ロコ,ロコ
+ロコ,ロコ,路子,伴田路子
 百合子,七尾百合子
 紗代子,高山紗代子
 亜利沙,松田亜利沙
@@ -541,8 +557,9 @@ const idol_names = `
 歌織,桜守歌織
 小鳥,音無小鳥
 美咲,青羽美咲
-社長,高木順二朗
+高木社長,高木順二朗,社長
 劇子,劇場の魂
+黒井社長, 黒井崇男
 
 `;
 
