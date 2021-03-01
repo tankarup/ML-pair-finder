@@ -132,9 +132,10 @@ function process_raw_data(json){
             section: event['話数'],
             subtitle: event['サブタイトル'],
             members: members,
-            url: event['Music'],
+            url: event['Music'] ? event['Music'] : event['twitter'],
             view: event['閲覧'],
             mv: event['MV'],
+            refer: event['言及のみ'].split(/[、,・，\n]/).filter(v => v).map(function(item){return normalize_name(item.trim());}),
         });
     }
     return processed;
@@ -304,7 +305,8 @@ function update_content(idol1_name, idol2_name, type_str){
                 <td>${content.group}</td>
                 <td>${title}</td>
                 <td>${members_str}</td>
-                <td>${view}</td>
+                <td>${content.refer ? content.refer.join(', ') : ''}</td>
+                <td style="font-size:smaller;">${view}</td>
             </tr>`;
 
             //-----
