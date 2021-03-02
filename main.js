@@ -25,8 +25,9 @@ function getJsonp_GAS() {
         dataType: 'jsonp',
         jsonpCallback: 'jsondata',
         success: function (json) {
-            save_data(json);
+            
             ml_members_data = ml_members_data.concat(process_raw_data(json));
+            save_data(ml_members_data);
             init_menu();
             const idol1 = getParam('idol1');
             const idol2 = getParam('idol2');
@@ -77,6 +78,7 @@ function get_4koma_Jsonp_GAS() {
 
             }
             ml_members_data = ml_members_data.concat(yonkoma_list);
+            save_data(ml_members_data);
             init_menu();
             const idol1 = getParam('idol1');
             const idol2 = getParam('idol2');
@@ -293,8 +295,8 @@ function update_content(idol1_name, idol2_name, type_str){
             members_str = members_str.slice(0, -2);
 
             let title = content.title;
-            if (content.section.length > 0) title += `, ${content.section}`;
-            if (content.subtitle.length > 0) title += `, ${content.subtitle}`;
+            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;">, ${content.section}</span>`;
+            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;">, ${content.subtitle}</span>`;
 
 
 
@@ -498,8 +500,11 @@ let idol_name_map = [];
 function normalize_name(name){
 
     for (let i = 1; i < idol_name_map.length; i++){
-        if (name.startsWith(idol_name_map[i][1])){
-            return idol_name_map[i][0];
+        const idol_names = idol_name_map[i];
+        for (let j = 1; j < idol_names.length; j++){
+            if (name.startsWith(idol_name_map[i][j])){
+                return idol_name_map[i][0];
+            }
         }
     }
     return name;
@@ -559,7 +564,7 @@ const idol_names = `
 歌織,桜守歌織
 小鳥,音無小鳥
 美咲,青羽美咲
-高木社長,高木順二朗,社長
+社長,高木順二朗,高木社長
 劇子,劇場の魂
 黒井社長, 黒井崇男
 
