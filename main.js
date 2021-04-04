@@ -275,24 +275,32 @@ function update_content(idol1_name, idol2_name, type_str){
     */
     let filtered_contents = [];
     for (let content of  ml_members_data){
+        const all_members = content.members.concat(content.refer);
 
-        if ((content.members.indexOf(idol1) >= 0 || !idol1) && (content.members.indexOf(idol2) >= 0 || !idol2) && (content.type.indexOf(type) >= 0 || !type)){
+        if ((all_members.indexOf(idol1) >= 0 || !idol1) && (all_members.indexOf(idol2) >= 0 || !idol2) && (content.type.indexOf(type) >= 0 || !type)){
             filtered_contents.push(content);
             //URLデータがあるものはリンクをはる
             let view = content_link(content, 'view');
 
             //フィルター対象アイドルの名前を強調
-            let members_str = '';
-            for (let member of content.members){
-                if (member == idol1 || member == idol2){
-                    members_str += `<b>${member}</b>`;
-                } else {
-                    members_str += member;
+
+            function get_decorated_members_str(members, idol1, idol2){
+                let members_str = '';
+                for (let member of members){
+                    if (member == idol1 || member == idol2){
+                        members_str += `<b>${member}</b>`;
+                    } else {
+                        members_str += member;
+                    }
+                    members_str += ', ';
                 }
-                members_str += ', ';
+                //最後に付けた', 'を削除
+                members_str = members_str.slice(0, -2);
+                return members_str;
             }
-            //最後に付けた', 'を削除
-            members_str = members_str.slice(0, -2);
+            const members_str = get_decorated_members_str(content.members, idol1, idol2);
+            const referred_members_str = content.refer ? get_decorated_members_str(content.refer, idol1, idol2) : '';
+
 
             let title = content.title;
             if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;">, ${content.section}</span>`;
@@ -307,7 +315,7 @@ function update_content(idol1_name, idol2_name, type_str){
                 <td>${content.group}</td>
                 <td>${title}</td>
                 <td>${members_str}</td>
-                <td>${content.refer ? content.refer.join(', ') : ''}</td>
+                <td>${referred_members_str}</td>
                 <td style="font-size:smaller;">${view}</td>
             </tr>`;
 
