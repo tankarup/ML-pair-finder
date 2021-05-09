@@ -64,6 +64,7 @@ function get_4koma_Jsonp_GAS() {
                         idol.push(staff);
                     }
                 }
+                idol = idol.map(function(item){return member_dic(item)});
                 yonkoma_list.push({
                     type: '漫画',
                     group: '4コマ',
@@ -111,6 +112,24 @@ document.getElementById('idols1').addEventListener('change', function(){
 document.getElementById('idols2').addEventListener('change', function(){
     idol_changed();
 });
+
+function member_dic(member_str){
+    let member = member_str.trim();
+    if (!member) return null;
+    const matched = member.match(/(.*)\((.*)\)/);
+    if (matched){
+        return {
+            label: matched[1],
+            id: normalize_name(matched[2]),
+        };
+    } else {
+        return {
+            label: normalize_name(member),
+            id: normalize_name(member),
+        };
+    }
+}
+
 function process_raw_data(json){
     let processed = [];
     for (let i = 0; i < json.length; i++){
@@ -119,14 +138,12 @@ function process_raw_data(json){
         for (let j = 1; j < 10; j++){
             const members_str = event['登場人物' + j];
             if (members_str) {
-                members = members.concat(members_str.split(/[、,・，\n]/));
+                members = members.concat(members_str.split(/[、,・，\n]/).map(function(item){return member_dic(item)}));
+                members = members.filter(v => v);
             }
 
         }
-        members = members.filter(v => v);
-        members = members.map(function(item){
-            return normalize_name(item.trim());
-        });
+
         processed.push({
             type: event['種類'],
             group: event['グループ'],
@@ -137,7 +154,7 @@ function process_raw_data(json){
             url: event['Music'] ? event['Music'] : event['twitter'],
             view: event['閲覧'],
             mv: event['MV'],
-            refer: event['言及のみ'].split(/[、,・，\n]/).filter(v => v).map(function(item){return normalize_name(item.trim());}),
+            refer: event['言及のみ'].split(/[、,・，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}),
         });
     }
     return processed;
@@ -166,7 +183,7 @@ function add_type_menu(type_list){
 function get_person_list(data, key){
     let persons = [];
     for (let i = 0; i< data.length; i++){
-        persons = persons.concat(data[i][key]);
+        persons = persons.concat(data[i][key].map(function(item){return item ? item.id : null;}));
     }
     //重複を削除
     let person_list = persons.filter(function (x, i, self) {
@@ -251,6 +268,12 @@ function content_link(content, key){
     return title;
 }
 
+function members_id_list(members){
+    return members.map(function(item){
+        return item ? item.id : null;
+    });
+}
+
 function update_content(idol1_name, idol2_name, type_str){
     const idol1 = idol1_name ? idol1_name : '';
     const idol2 = idol2_name ? idol2_name : '';
@@ -275,7 +298,7 @@ function update_content(idol1_name, idol2_name, type_str){
     */
     let filtered_contents = [];
     for (let content of  ml_members_data){
-        const all_members = content.members.concat(content.refer);
+        const all_members = members_id_list(content.members.concat(content.refer));
 
         if ((all_members.indexOf(idol1) >= 0 || !idol1) && (all_members.indexOf(idol2) >= 0 || !idol2) && (content.type.indexOf(type) >= 0 || !type)){
             filtered_contents.push(content);
@@ -287,10 +310,10 @@ function update_content(idol1_name, idol2_name, type_str){
             function get_decorated_members_str(members, idol1, idol2){
                 let members_str = '';
                 for (let member of members){
-                    if (member == idol1 || member == idol2){
-                        members_str += `<b>${member}</b>`;
+                    if (member.id == idol1 || member.id == idol2){
+                        members_str += `<b>${member.label}</b>`;
                     } else {
-                        members_str += member;
+                        members_str += member.label;
                     }
                     members_str += ', ';
                 }
@@ -411,7 +434,9 @@ function idol_name_list(contents){
     //アイドルの名前一覧を作成
     let idol_list = [];
     for (let content of contents){
-        idol_list = idol_list.concat(content.members);
+        for (let member of content.members){
+            idol_list.push(member.id);
+        }
     }
     //アイドルの名前一覧
     const idol_names = idol_list.filter(function (x, i, self) {
@@ -480,9 +505,9 @@ function toCountList(contents) {
     }
     //カウント
     for (let content of contents){
-        for (let idol_name of content.members){
-            count_dic[idol_name][content.type] += 1;
-            count_dic[idol_name]['total'] += 1;
+        for (let idol of content.members){
+            count_dic[idol.id][content.type] += 1;
+            count_dic[idol.id]['total'] += 1;
         }
     }
     //console.log(count_dic);
@@ -505,8 +530,9 @@ function toCountList(contents) {
 }
 
 let idol_name_map = [];
+let idol_name_dic = {};
 function normalize_name(name){
-
+    /*
     for (let i = 1; i < idol_name_map.length; i++){
         const idol_names = idol_name_map[i];
         for (let j = 1; j < idol_names.length; j++){
@@ -515,7 +541,9 @@ function normalize_name(name){
             }
         }
     }
-    return name;
+    */
+    const nomalized_name = idol_name_dic[name];
+    return nomalized_name ? nomalized_name : name;
 }
 const idol_names = `
 春香,天海春香
@@ -549,7 +577,7 @@ const idol_names = `
 海美,高坂海美
 育,中谷育
 朋花,天空橋朋花
-エミリー,エミリー
+エミリー,エミリー, エミリースチュアート, エミリー スチュアート
 志保,北沢志保
 歩,舞浜歩
 ひなた,木下ひなた
@@ -578,11 +606,15 @@ const idol_names = `
 
 `;
 
-let idols = idol_names.split('\n');
-for (let idol of idols){
-    let names = idol.split(',');
+let idols_line = idol_names.split('\n');
+for (let idol_line of idols_line){
+    let names = idol_line.split(',');
     names = names.map(function(name){
         return name.trim();
     });
-    idol_name_map.push(names);
+    for (let i = 0; i < names.length; i++){
+        if (idol_name_dic[names[i]]) continue;
+        idol_name_dic[names[i]] = names[0];
+    }
+
 }
