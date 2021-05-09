@@ -138,7 +138,7 @@ function process_raw_data(json){
         for (let j = 1; j < 10; j++){
             const members_str = event['登場人物' + j];
             if (members_str) {
-                members = members.concat(members_str.split(/[、,・，\n]/).map(function(item){return member_dic(item)}));
+                members = members.concat(members_str.split(/[、,，\n]/).map(function(item){return member_dic(item)}));
                 members = members.filter(v => v);
             }
 
@@ -154,7 +154,7 @@ function process_raw_data(json){
             url: event['Music'] ? event['Music'] : event['twitter'],
             view: event['閲覧'],
             mv: event['MV'],
-            refer: event['言及のみ'].split(/[、,・，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}),
+            refer: event['言及のみ'].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}),
         });
     }
     return processed;
