@@ -283,6 +283,7 @@ function update_content(idol1_name, idol2_name, type_str){
     document.getElementById('type').value = type;
     
     let html = '';
+    let index = 1;
     /*
     html += '<table class="table table-sm table-striped">'; //
     html += `<thead class="thead-dark">
@@ -334,6 +335,7 @@ function update_content(idol1_name, idol2_name, type_str){
 
             html += `
             <tr>
+                <td>${index}</td>
                 <td>${content.type}</td>
                 <td>${content.group}</td>
                 <td>${title}</td>
@@ -341,6 +343,7 @@ function update_content(idol1_name, idol2_name, type_str){
                 <td>${referred_members_str}</td>
                 <td style="font-size:smaller;">${view}</td>
             </tr>`;
+            index += 1;
 
             //-----
 
