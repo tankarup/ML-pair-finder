@@ -19,7 +19,8 @@ window.onload = function () {
 
 // 【main-script】 スプレッドシート内の記述をjsonデータとして読み込み html 内へ入れ込む
 function getJsonp_GAS() {
-	
+	document.getElementById('loading_text').innerText = 'Loading Game data...';
+	document.getElementById('loading').style.visibility="visible";
     $.ajax({
         type: 'GET',
         url: 'https://script.google.com/macros/s/AKfycbwLXU0EfApHHon_kMdD2H8KCALCKiQlqjnu6hr7HfBEEYtsiMSPhpDepg/exec',
@@ -42,6 +43,7 @@ function getJsonp_GAS() {
 }
 function get_4koma_Jsonp_GAS() {
 	document.getElementById('loading_text').innerText = 'Loading 4koma...';
+	document.getElementById('loading').style.visibility="visible";
     $.ajax({
         type: 'GET',
         url: 'https://script.google.com/macros/s/AKfycbxpOMNXs_wQA0H-i2Y3KXlTOa-fMKz6ltr1eUwMCD8LQJ94QDsg8GEY/exec',
@@ -86,7 +88,9 @@ function get_4koma_Jsonp_GAS() {
             const idol1 = getParam('idol1');
             const idol2 = getParam('idol2');
             update_content(idol1, idol2);
-			document.getElementById('loading').style.display="none";
+
+			document.getElementById('loading_text').innerText = '';
+			//document.getElementById('loading').style.display="none";
 
         }
     });
@@ -101,10 +105,15 @@ function load_data(){
 }
 
 function idol_changed(){
-    const idol1 = document.getElementById('idols1').value;
-    const idol2 = document.getElementById('idols2').value;
-    const type = document.getElementById('type').value;
-    update_content(idol1, idol2, type);
+	document.getElementById('loading').style.visibility="visible";
+	//ローディングを表示するためにちょっと待つ
+	setTimeout(() => {
+		const idol1 = document.getElementById('idols1').value;
+		const idol2 = document.getElementById('idols2').value;
+		const type = document.getElementById('type').value;
+		update_content(idol1, idol2, type);
+	}, 10);
+
 }
 document.getElementById('type').addEventListener('change', function(){
     idol_changed();
@@ -287,6 +296,10 @@ function members_id_list(members){
 }
 
 function update_content(idol1_name, idol2_name, type_str){
+	//ローディング表示
+	console.log(idol1_name, idol2_name, type_str);
+	document.getElementById('loading').style.visibility="visible";
+
     const idol1 = idol1_name ? idol1_name : '';
     const idol2 = idol2_name ? idol2_name : '';
     const type = type_str ? type_str : '';
@@ -362,6 +375,7 @@ function update_content(idol1_name, idol2_name, type_str){
             
             //-----
         }
+
     }
     /*
     html += `
@@ -373,6 +387,9 @@ function update_content(idol1_name, idol2_name, type_str){
    tbody.innerHTML = '';
    tbody.insertAdjacentHTML('beforeend', html);
     update_graph(filtered_contents);
+
+	//ローディング非表示
+	document.getElementById('loading').style.visibility="hidden";
 }
 function init_graph(){
 
