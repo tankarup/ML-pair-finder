@@ -40,13 +40,55 @@
             //max-width: 800px;
             margin: 1em auto;
         }
+#loading {
+	display: inline-block;
+	margin-left: 10px;
+
+}
+.dot1 {
+	background: #FF2284;
+	animation-delay: -0.15s;
+}
+.dot2 {
+	background: #005EFF;
+	animation-delay: 0s;
+}
+.dot3 {
+	background: #FFBB00;
+	animation-delay: 0.15s;
+}
+.dot {
+	top: 0;
+	bottom: 0;
+	margin: auto 2px;
+	border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  animation-name: fadein;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-fill-mode: both;
+  animation-play-state: running;
+}
+
+@keyframes fadein {
+  0%, 40% {
+    opacity: 0;
+  }
+  100% {
+	opacity: 1;
+  }
+}
     </style>
 </head>
 
 <body>
     <nav class="navbar navbar-primary bg-primary text-light p-0 sticky-top">
-        <h1 class="h3">ミリシタアイドル カプ検索</h1>
-
+        <h1 class="h3">ミリシタアイドル カプ検索<div id="loading"><div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><span id="loading_text">Loading Game data...</span></div></h1>
+		
         <div >
             <select id="type">
                 <option value="">種類</option>

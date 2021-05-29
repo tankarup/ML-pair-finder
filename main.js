@@ -19,6 +19,7 @@ window.onload = function () {
 
 // 【main-script】 スプレッドシート内の記述をjsonデータとして読み込み html 内へ入れ込む
 function getJsonp_GAS() {
+	
     $.ajax({
         type: 'GET',
         url: 'https://script.google.com/macros/s/AKfycbwLXU0EfApHHon_kMdD2H8KCALCKiQlqjnu6hr7HfBEEYtsiMSPhpDepg/exec',
@@ -40,6 +41,7 @@ function getJsonp_GAS() {
     });
 }
 function get_4koma_Jsonp_GAS() {
+	document.getElementById('loading_text').innerText = 'Loading 4koma...';
     $.ajax({
         type: 'GET',
         url: 'https://script.google.com/macros/s/AKfycbxpOMNXs_wQA0H-i2Y3KXlTOa-fMKz6ltr1eUwMCD8LQJ94QDsg8GEY/exec',
@@ -84,6 +86,7 @@ function get_4koma_Jsonp_GAS() {
             const idol1 = getParam('idol1');
             const idol2 = getParam('idol2');
             update_content(idol1, idol2);
+			document.getElementById('loading').style.display="none";
 
         }
     });
