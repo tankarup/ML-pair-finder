@@ -112,20 +112,29 @@ document.getElementById('idols1').addEventListener('change', function(){
 document.getElementById('idols2').addEventListener('change', function(){
     idol_changed();
 });
-
+/*
+名前が「びっきー(我那覇響)」という形式で登録されている場合、びっきー：役名、我那覇響：アイドル名、として扱い、
+{
+	label: びっきー,
+	id: 響
+}
+という形式にする。
+*/
 function member_dic(member_str){
     let member = member_str.trim();
     if (!member) return null;
     const matched = member.match(/(.*)\((.*)\)/);
     if (matched){
+		const name = normalize_name(matched[2]);
         return {
-            label: matched[1],
-            id: normalize_name(matched[2]),
+            label: `${matched[1]}(${name})`,
+            id: name,
         };
     } else {
+		const name = normalize_name(member);
         return {
-            label: normalize_name(member),
-            id: normalize_name(member),
+            label: name,
+            id: name,
         };
     }
 }
