@@ -645,7 +645,6 @@ const idol_names = `春香	天海春香
 社長	高木順二朗	高木社長
 げき子	劇場の魂	劇子
 黒井社長	黒井崇男	
-		
 `;
 
 let idol_lines = idol_names.split('\n');
