@@ -369,8 +369,8 @@ function update_content(idol1_name, idol2_name, type_str){
 
 
             let title = content.title;
-            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${content.section}</span>`;
-            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${content.subtitle}</span>`;
+            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${''+content.section}</span>`;
+            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${''+content.subtitle}</span>`;
 
 
 
@@ -619,7 +619,7 @@ const idol_names = `春香	天海春香
 海美	高坂海美	
 育	中谷育	
 朋花	天空橋朋花	
-エミリー	エミリー	エミリースチュアート
+エミリー	エミリー	エミリースチュアート	エミリー スチュアート	エミリー　スチュアート
 志保	北沢志保	
 歩	舞浜歩	
 ひなた	木下ひなた	
