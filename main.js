@@ -46,7 +46,7 @@ function get_4koma_Jsonp_GAS() {
 	document.getElementById('loading').style.visibility="visible";
     $.ajax({
         type: 'GET',
-        url: 'https://script.google.com/macros/s/AKfycbxpOMNXs_wQA0H-i2Y3KXlTOa-fMKz6ltr1eUwMCD8LQJ94QDsg8GEY/exec',
+        url: 'https://script.google.com/macros/s/AKfycby9pjvZZlvKwKp23P8DRyzoXKkR4BWVwW9XHIHElP1M7X4NHaHe5bW2kosqZZ92F4_S/exec',
         dataType: 'jsonp',
         jsonpCallback: 'jsondata',
         success: function (json) {
@@ -83,7 +83,8 @@ function get_4koma_Jsonp_GAS() {
 
             }
             ml_members_data = ml_members_data.concat(yonkoma_list);
-            save_data(ml_members_data);
+			//show_uncouple();
+            //save_data(ml_members_data);
             init_menu();
             const idol1 = getParam('idol1');
             const idol2 = getParam('idol2');
@@ -95,6 +96,54 @@ function get_4koma_Jsonp_GAS() {
         }
     });
 }
+function show_uncouple(){
+	/* カプ数
+	cp_count = {
+		春香: {
+			春香: 0,
+			千早: 10,
+			美希: 15,
+			
+		},
+		千早: {
+			春香: 10,
+			千早: 0,
+			美希: 20,
+		}
+	}
+	*/
+	let cp_count = {};
+	//初期化
+	for (let i = 0; i < 52; i++){
+		cp_count[idol_name_standard_list[i]] = {};
+		for (let j = 0; j < 52; j++){
+			cp_count[idol_name_standard_list[i]][idol_name_standard_list[j]] = 0;
+		}
+	}
+	//組み合わせ登場回数をカウント
+	for (data of ml_members_data){
+		const members = data.members;
+		for (let i = 0; i < members.length; i++){
+			//52人以外のメンバーはスキップ
+			if(!cp_count[members[i].id]) continue;
+			//名前の順番がバラバラなので、意図的にダブルカウントするためj=0から始めている
+			for (let j = 0; j < members.length; j++){
+				cp_count[members[i].id][members[j].id] += 1;
+			}
+		}
+	}
+	//カウント数がゼロの組み合わせを表示
+	for (let i = 0; i < 52; i++){
+		const name1 = idol_name_standard_list[i];
+		for (let j = 0; j < 52; j++){
+			const name2 = idol_name_standard_list[j];
+			const count = cp_count[name1][name2];
+			if (count == 0) console.log(name1, name2, count);
+		}
+	}
+
+}
+
 function save_data(data){
     localStorage.setItem('ml_members', JSON.stringify(data));
 }
@@ -404,9 +453,46 @@ function update_content(idol1_name, idol2_name, type_str){
    tbody.innerHTML = '';
    tbody.insertAdjacentHTML('beforeend', html);
     update_graph(filtered_contents);
+	show_additional_information(idol1, idol2);
 
 	//ローディング非表示
 	document.getElementById('loading').style.visibility="hidden";
+}
+//シアター52人のアイドルか？
+function is_theater_idol(idol){
+	const index = idol_name_standard_list.indexOf(idol);
+	if (index < 0) return false;
+	if (index > 52 -1) return false;
+	return true;
+}
+function show_additional_information(idol1, idol2){
+
+	const list_item_class = "list-group-item py-1";
+	
+	let html = '';
+	if (is_theater_idol(idol1) || is_theater_idol(idol2)){
+		html += '<h2 class="h3 bg-secondary">外部ページを探す</h2>'
+		html += '<ul class="list-group">';
+		if (is_theater_idol(idol1)){
+			html += `<li class="${list_item_class}">ミリシタ攻略まとめwiki：<a target="_blank" href="https://imasml-theater-wiki.gamerch.com/${idol_info[idol1].fullname}">${idol_info[idol1].fullname}</a></li>`;
+			html += `<li class="${list_item_class}">ミリシタDB：<a target="_blank" href="https://imas.gamedbs.jp/mlth/chara/show/${idol_info[idol1].id}">${idol_info[idol1].fullname}</a></li>`;
+			html += `<li class="${list_item_class}">ミリシタストーリーまとめ：<a target="_blank" href="https://w.atwiki.jp/ml-story/tag/${idol_info[idol1].fullname}">${idol_info[idol1].fullname}</a></li>`;
+		}
+		if (is_theater_idol(idol2)){
+			html += `<li class="${list_item_class}">ミリシタ攻略まとめwiki：<a target="_blank" href="https://imasml-theater-wiki.gamerch.com/${idol_info[idol2].fullname}">${idol_info[idol2].fullname}</a></li>`;
+			html += `<li class="${list_item_class}">ミリシタDB：<a target="_blank" href="https://imas.gamedbs.jp/mlth/chara/show/${idol_info[idol2].id}">${idol_info[idol2].fullname}</a></li>`;
+			html += `<li class="${list_item_class}">ミリシタストーリーまとめ：<a target="_blank" href="https://w.atwiki.jp/ml-story/tag/${idol_info[idol2].fullname}">${idol_info[idol2].fullname}</a></li>`;
+		}
+		if (is_theater_idol(idol1) && is_theater_idol(idol2)){
+			html += `<li class="${list_item_class}">グリマス日和：<a target="_blank" href="https://greemas.doorblog.jp/search?q=${idol1}+${idol2}背景出演カードまとめ">${idol1}のカードの背景に${idol2}が出演</a></li>`;
+			html += `<li class="${list_item_class}">グリマス日和：<a target="_blank" href="https://greemas.doorblog.jp/search?q=${idol2}+${idol1}背景出演カードまとめ">${idol2}のカードの背景に${idol1}が出演</a></li>`;
+		}
+
+		html += '</ul>';
+	}
+
+
+	document.getElementById('additional_info').innerHTML = html;
 }
 function init_graph(){
 
@@ -487,6 +573,20 @@ function idol_name_list(contents){
             idol_list.push(member.id);
         }
     }
+	//-------
+	/*
+	//データ数がゼロのアイドルもグラフに入れる
+	//ミリシタ52人だけ
+	for (let i = 0; i < 52; i++){
+		const name = idol_name_standard_list[i];
+		//リストに無かったら追加
+		if (idol_list.indexOf(name) == -1){
+			idol_list.push(name);
+		}
+	}
+	*/
+	//--------
+
     //アイドルの名前一覧
     const idol_names = idol_list.filter(function (x, i, self) {
         return self.indexOf(x) === i;
@@ -508,6 +608,8 @@ function update_graph(contents){
         idol_names.push(item.name);
     }
     //document.getElementById('graph').innerHTML = JSON.stringify(toCountList(idol_list));
+	
+
 
     chart.xAxis[0].setCategories(idol_names);
     //chart.series[0].data[0].update({y: 80000});
@@ -522,6 +624,8 @@ function update_graph(contents){
             data: new_data,
         });
     }
+
+
     chart.redraw();
 
 }
@@ -647,7 +751,18 @@ const idol_names = `春香	天海春香
 黒井社長	黒井崇男	
 `;
 
+let idol_info = {};
+/* 
+idol_info = {
+	春香:{
+		fullname: 天海春香,
+		id: 1,
+		name: 春香,
+	},
+
+*/
 let idol_lines = idol_names.split('\n');
+let index = 1;
 for (let idol_line of idol_lines){
 	if (idol_line.length < 1) continue;
     let names = idol_line.split('\t');
@@ -659,5 +774,11 @@ for (let idol_line of idol_lines){
         if (idol_name_dic[names[i]]) continue;
         idol_name_dic[names[i]] = names[0];
     }
+	idol_info[names[0]] = {
+		fullname: names[1],
+		id: index,
+		name: names[0],
+	};
+	index += 1;
 
 }
