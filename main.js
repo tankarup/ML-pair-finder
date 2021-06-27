@@ -2,6 +2,7 @@
 
 let ml_members_data = [];
 let chart;
+let shown_contents;
 
 // ページ読み込み後の処理
 window.onload = function () {
@@ -172,6 +173,9 @@ document.getElementById('idols1').addEventListener('change', function(){
 });
 document.getElementById('idols2').addEventListener('change', function(){
     idol_changed();
+});
+document.getElementById('include_all_idols').addEventListener('change', function(){
+	update_graph(shown_contents);
 });
 /*
 名前が「びっきー(我那覇響)」という形式で登録されている場合、びっきー：役名、我那覇響：アイドル名、として扱い、
@@ -449,10 +453,11 @@ function update_content(idol1_name, idol2_name, type_str){
     </table>`;
     document.getElementById('whole').innerHTML = html;
     */
-   let tbody = document.getElementById('pairs-table-body');
-   tbody.innerHTML = '';
-   tbody.insertAdjacentHTML('beforeend', html);
-    update_graph(filtered_contents);
+	let tbody = document.getElementById('pairs-table-body');
+	tbody.innerHTML = '';
+	tbody.insertAdjacentHTML('beforeend', html);
+	update_graph(filtered_contents);
+	shown_contents = filtered_contents;
 	show_additional_information(idol1, idol2);
 
 	//ローディング非表示
