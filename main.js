@@ -571,17 +571,20 @@ function idol_name_list(contents){
         }
     }
 	//-------
-	/*
+	
 	//データ数がゼロのアイドルもグラフに入れる
 	//ミリシタ52人だけ
-	for (let i = 0; i < 52; i++){
-		const name = idol_name_standard_list[i];
-		//リストに無かったら追加
-		if (idol_list.indexOf(name) == -1){
-			idol_list.push(name);
+	if (document.getElementById('include_all_idols').checked){
+		for (let i = 0; i < 52; i++){
+			const name = idol_name_standard_list[i];
+			//リストに無かったら追加
+			if (idol_list.indexOf(name) == -1){
+				idol_list.push(name);
+			}
 		}
 	}
-	*/
+
+	
 	//--------
 
     //アイドルの名前一覧
