@@ -479,7 +479,7 @@ function show_additional_information(idol1, idol2){
 		html += '<h2 class="h3 bg-info text-light">外部ページを探す</h2>'
 		html += '<ul class="list-group">';
 		if (is_theater_idol(idol1) && is_theater_idol(idol2)){
-			html += `<li class="list-group-item py-2 list-group-item-info">グリマス日和：<a target="_blank" href="https://greemas.doorblog.jp/search?q=${idol1}+${idol2}背景出演カードまとめ"><mark>${idol1}</mark>のカードの背景に<mark>${idol2}</mark>が出演</a>(してるかも), <a target="_blank" href="https://greemas.doorblog.jp/search?q=${idol2}+${idol1}背景出演カードまとめ"><mark>${idol2}</mark>のカードの背景に<mark>${idol1}</mark>が出演</a>(してるかも)</li>`;
+			html += `<li class="list-group-item py-2 list-group-item-info">グリマス日和：<a target="_blank" href="https://greemas.doorblog.jp/search?q=${idol1}+${idol2}背景出演カードまとめ"><mark>${idol1}</mark>のカードの背景に<mark>${idol2}</mark>が出演してるかも</a>, <a target="_blank" href="https://greemas.doorblog.jp/search?q=${idol2}+${idol1}背景出演カードまとめ"><mark>${idol2}</mark>のカードの背景に<mark>${idol1}</mark>が出演してるかも</a></li>`;
 		}
 		if (is_theater_idol(idol1)){
 			html += `<li class="${list_item_class}">${idol_info[idol1].name}の情報まとめ：<a target="_blank" href="https://imasml-theater-wiki.gamerch.com/${idol_info[idol1].fullname}">ミリシタ攻略まとめwiki</a>, <a target="_blank" href="https://imas.gamedbs.jp/mlth/chara/show/${idol_info[idol1].id}">ミリシタDB</a>, <a target="_blank" href="https://w.atwiki.jp/ml-story/tag/${idol_info[idol1].fullname}">ミリシタストーリーまとめ</a></li>`;
