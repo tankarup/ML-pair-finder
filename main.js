@@ -251,7 +251,7 @@ function add_type_menu(type_list){
     for (let type of type_list){
         options_html += `<option value="${type}">${type}</option>`;
     }
-    document.getElementById('type').innerHTML = '<option value="">種類</option>' + options_html;
+    document.getElementById('type').innerHTML = '<option value="">大分類</option>' + options_html;
 }
 
 function get_person_list(data, key){
