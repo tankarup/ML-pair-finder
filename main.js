@@ -3,6 +3,7 @@
 let ml_members_data = [];
 let chart;
 let shown_contents;
+let to_update_group_menu = false;
 
 // ページ読み込み後の処理
 window.onload = function () {
@@ -30,6 +31,7 @@ function getJsonp_GAS() {
         success: function (json) {
             
             ml_members_data = ml_members_data.concat(process_raw_data(json));
+			shown_contents = ml_members_data;
             save_data(ml_members_data);
             init_menu();
             const idol1 = getParam('idol1');
@@ -161,11 +163,19 @@ function idol_changed(){
 		const idol1 = document.getElementById('idols1').value;
 		const idol2 = document.getElementById('idols2').value;
 		const type = document.getElementById('type').value;
-		update_content(idol1, idol2, type);
+		const group = document.getElementById('group').value;
+		update_content(idol1, idol2, type, group);
 	}, 10);
 
 }
 document.getElementById('type').addEventListener('change', function(){
+	console.log('type menu changed')
+    idol_changed();
+	//大分類メニューが変更されたら、中分類メニューを合わせて変更
+	document.getElementById('group').value = '';
+	to_update_group_menu = true;
+});
+document.getElementById('group').addEventListener('change', function(){
     idol_changed();
 });
 document.getElementById('idols1').addEventListener('change', function(){
@@ -234,25 +244,37 @@ function process_raw_data(json){
     return processed;
 }
 
-function get_type_list(data){
-    let type_list = [];
+function get_category_list(data, category){
+    let category_list = [];
     for (let item of data){
-        const type = item.type;
+        const type = item[category];
         if (!type) continue;
-        if (type_list.indexOf(type) < 0){
-            type_list.push(type);
+        if (category_list.indexOf(type) < 0){
+            category_list.push(type);
         }
     }
-    return type_list;
+    return category_list;
 }
 
-function add_type_menu(type_list){
+function create_type_menu(){
+	const type_list = get_category_list(ml_members_data, 'type');
+
     let options_html = '';
     for (let type of type_list){
         options_html += `<option value="${type}">${type}</option>`;
     }
     document.getElementById('type').innerHTML = '<option value="">大分類</option>' + options_html;
 }
+function create_group_menu(){
+	const type_list = get_category_list(shown_contents, 'group');
+	console.log(type_list);
+    let options_html = '';
+    for (let type of type_list){
+        options_html += `<option value="${type}">${type}</option>`;
+    }
+    document.getElementById('group').innerHTML = '<option value="">中分類</option>' + options_html;
+}
+
 
 function get_person_list(data, key){
     let persons = [];
@@ -304,7 +326,8 @@ function init_menu(){
     document.getElementById('idols1').innerHTML = '<option value="">登場人物1</option>' + options_html;
     document.getElementById('idols2').innerHTML = '<option value="">登場人物2</option>' + options_html;
 
-    add_type_menu(get_type_list(ml_members_data));
+    create_type_menu();
+	create_group_menu();
 
     init_graph();
 }
@@ -365,18 +388,20 @@ function members_id_list(members){
     });
 }
 
-function update_content(idol1_name, idol2_name, type_str){
+function update_content(idol1_name, idol2_name, type_str, group_str){
 	//ローディング表示
-	console.log(idol1_name, idol2_name, type_str);
+	console.log('update_content: ', idol1_name, idol2_name, type_str, group_str);
 	document.getElementById('loading').style.visibility="visible";
 
     const idol1 = idol1_name ? idol1_name : '';
     const idol2 = idol2_name ? idol2_name : '';
     const type = type_str ? type_str : '';
+	const group = group_str ? group_str : '';
     document.getElementById('idols1').value = idol1;
     document.getElementById('idols2').value = idol2;
     document.getElementById('type').value = type;
-    
+	document.getElementById('group').value = group;
+
     let html = '';
     let index = 1;
     /*
@@ -396,7 +421,10 @@ function update_content(idol1_name, idol2_name, type_str){
     for (let content of  ml_members_data){
         const all_members = members_id_list(content.members.concat(content.refer));
 
-        if ((all_members.indexOf(idol1) >= 0 || !idol1) && (all_members.indexOf(idol2) >= 0 || !idol2) && (content.type.indexOf(type) >= 0 || !type)){
+        if ((all_members.indexOf(idol1) >= 0 || !idol1)
+			 && (all_members.indexOf(idol2) >= 0 || !idol2)
+			 && (content.type.indexOf(type) >= 0 || !type)
+			 && (content.group.indexOf(group) >= 0 || !group)){
             filtered_contents.push(content);
             //URLデータがあるものはリンクをはる
             let view = content_link(content, 'view');
@@ -459,6 +487,12 @@ function update_content(idol1_name, idol2_name, type_str){
 	update_graph(filtered_contents);
 	shown_contents = filtered_contents;
 	show_additional_information(idol1, idol2);
+
+	//中分類メニューを必要に応じて更新
+	if (to_update_group_menu) {
+		create_group_menu();
+		to_update_group_menu = false;
+	}
 
 	//ローディング非表示
 	document.getElementById('loading').style.visibility="hidden";
