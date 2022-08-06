@@ -537,7 +537,7 @@ function init_graph(){
             type: 'column'
         },
         title: {
-            text: '登録データ数',
+            text: 'アイドルの登場回数(登録データ数)',
             verticalAlign: 'bottom',
             y: -10,
         },
@@ -551,16 +551,19 @@ function init_graph(){
         yAxis: {
             min: 0,
             title: {
-                text: '登録データ数'
+                text: '登録データ数(言及のみのケースを除く)',
+				style: {
+					color: 'black',
+				}
             },
             stackLabels: {
                 enabled: true,
                 style: {
-                    fontWeight: 'bold',
+                    fontWeight: 'normal',
                     color: ( // theme
                         Highcharts.defaultOptions.title.style &&
                         Highcharts.defaultOptions.title.style.color
-                    ) || 'gray'
+                    ) || 'black'
                 }
             }
         },
