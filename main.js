@@ -73,8 +73,8 @@ function get_4koma_Jsonp_GAS() {
                 }
                 idol = idol.map(function(item){return member_dic(item)});
                 yonkoma_list.push({
-                    type: '漫画',
-                    group: '4コマ',
+                    type: '4コマ',
+                    group: story['シリーズ'],
                     section: '',
                     subtitle: '',
                     title: story['タイトル'],
