@@ -158,6 +158,7 @@ function load_data(){
 
 function idol_changed(){
 	document.getElementById('loading').style.visibility="visible";
+	update_url();
 	//ローディングを表示するためにちょっと待つ
 	setTimeout(() => {
 		const idol1 = document.getElementById('idols1').value;
@@ -168,6 +169,30 @@ function idol_changed(){
 	}, 10);
 
 }
+
+
+
+//urlに選択したメニュー項目を追加
+function update_url(){
+	const idol1 = document.getElementById('idols1').value;
+	const idol2 = document.getElementById('idols2').value;
+	const type = document.getElementById('type').value;
+	const group = document.getElementById('group').value;
+
+	let params = [];
+	params[0] = idol1 ? `idol1=${idol1}`: '';
+	params[1] = idol2 ?  `idol2=${idol2}`: '';
+	//params[2] = type ? `type=${type}` : '';
+	//params[3] = group ? `group=${group}` : '';
+	
+	const out1 = params.filter(function(value){
+		return value;
+	}).join('&');
+	const out2 = out1 ? `?${out1}` : '';
+
+	history.replaceState(null, null, 'index.html' + out2);
+}
+
 document.getElementById('type').addEventListener('change', function(){
 	console.log('type menu changed')
     idol_changed();
@@ -233,7 +258,7 @@ function process_raw_data(json){
             group: event['グループ'],
             title: event['タイトル'],
             section: event['話数'],
-            subtitle: event['サブタイトル'],
+            subtitle: String(event['サブタイトル']),
             members: members,
             url: event['Music'] ? event['Music'] : event['twitter'],
             view: event['閲覧'],
@@ -450,8 +475,8 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 
 
             let title = content.title;
-            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${''+content.section}</span>`;
-            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${''+content.subtitle}</span>`;
+            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${','+content.section}</span>`;
+            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${','+content.subtitle}</span>`;
 
 
 
