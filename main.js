@@ -475,8 +475,8 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 
 
             let title = content.title;
-            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${','+content.section}</span>`;
-            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${','+content.subtitle}</span>`;
+            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${', '+content.section}</span>`;
+            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${', '+content.subtitle}</span>`;
 
 
 
