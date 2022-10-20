@@ -443,50 +443,45 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
             <tbody class="">`;
     */
     let filtered_contents = [];
-    for (let content of ml_members_data) {
-		const all_members = members_id_list(content.members.concat(content.refer));
-		const refered_members = members_id_list(ccontent.refer);
+    for (let content of  ml_members_data){
+        const all_members = members_id_list(content.members.concat(content.refer));
 
-		if ((all_members.indexOf(idol1) >= 0 || !idol1)
+        if ((all_members.indexOf(idol1) >= 0 || !idol1)
 			 && (all_members.indexOf(idol2) >= 0 || !idol2)
 			 && (content.type.indexOf(type) >= 0 || !type)
-			 && (content.group.indexOf(group) >= 0 || !group)) {
-			
-			//アイドルがどちらも言及のみの場合はリストに入れない
-			if ((refered_members.indexOf(idol1) >= 0)
-			&& (refered_members.indexOf(idol2) >= 0)){
-				continue;
-			}
-			
-			//条件に合致したアイテムをリストに入れる
-			filtered_contents.push(content);
-			
-			//URLデータがあるものはリンクをはる
-			let view = content_link(content, "view");
+			 && (content.group.indexOf(group) >= 0 || !group)){
+            filtered_contents.push(content);
+            //URLデータがあるものはリンクをはる
+            let view = content_link(content, 'view');
 
-			//フィルター対象アイドルの名前を強調
-			function get_decorated_members_str(members, idol1, idol2) {
-				let members_str = "";
-				for (let member of members) {
-					if (member.id == idol1 || member.id == idol2) {
-						members_str += `<b>${member.label}</b>`;
-					} else {
-						members_str += member.label;
-					}
-					members_str += ", ";
-				}
-				//最後に付けた', 'を削除
-				members_str = members_str.slice(0, -2);
-				return members_str;
-			}
-			const members_str = get_decorated_members_str(content.members, idol1, idol2);
-			const referred_members_str = content.refer ? get_decorated_members_str(content.refer, idol1, idol2) : "";
+            //フィルター対象アイドルの名前を強調
 
-			let title = content.title;
-			if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${", " + content.section}</span>`;
-			if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${", " + content.subtitle}</span>`;
+            function get_decorated_members_str(members, idol1, idol2){
+                let members_str = '';
+                for (let member of members){
+                    if (member.id == idol1 || member.id == idol2){
+                        members_str += `<b>${member.label}</b>`;
+                    } else {
+                        members_str += member.label;
+                    }
+                    members_str += ', ';
+                }
+                //最後に付けた', 'を削除
+                members_str = members_str.slice(0, -2);
+                return members_str;
+            }
+            const members_str = get_decorated_members_str(content.members, idol1, idol2);
+            const referred_members_str = content.refer ? get_decorated_members_str(content.refer, idol1, idol2) : '';
 
-			html += `
+
+            let title = content.title;
+            if (content.section.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${', '+content.section}</span>`;
+            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${', '+content.subtitle}</span>`;
+
+
+
+
+            html += `
             <tr>
                 <td>${index}</td>
                 <td>${content.type}</td>
@@ -496,13 +491,15 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
                 <td>${referred_members_str}</td>
                 <td style="font-size:smaller;">${view}</td>
             </tr>`;
-			index += 1;
+            index += 1;
 
-			//-----
+            //-----
 
-			//-----
-		}
-	}
+            
+            //-----
+        }
+
+    }
     /*
     html += `
         </tbody>
