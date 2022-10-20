@@ -452,11 +452,13 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 			 && (content.type.indexOf(type) >= 0 || !type)
 			 && (content.group.indexOf(group) >= 0 || !group)) {
 			
+			/*
 			//アイドルがどちらも言及のみの場合はリストに入れない
 			if ((refered_members.indexOf(idol1) >= 0)
 			&& (refered_members.indexOf(idol2) >= 0)){
 				continue;
 			}
+			*/
 			
 			//条件に合致したアイテムをリストに入れる
 			filtered_contents.push(content);
