@@ -381,9 +381,20 @@ function youtube_img(url){
 
 }
 
-function get_link_str(url, text){
-    const img = youtube_img(url);
-    return (img ? `<img src="${img}">` : text);
+function get_link_str(url, default_text){
+    
+	//youtubeのリンクだったら
+	const img = youtube_img(url);
+	if (img){
+		return `<img src="${img}">`;
+	}
+	//twitterのリンクだったら
+	if (url.indexOf('twitter') > -1){
+		return `<img src="twitter.png" style="width: 16px; height:16px;">`;
+	}
+
+	return default_text;
+    return (img ? `<img src="${img}">` : default_text);
 }
 
 function content_link(content, key){
