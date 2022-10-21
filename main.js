@@ -445,17 +445,26 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
     let filtered_contents = [];
     for (let content of  ml_members_data){
         const all_members = members_id_list(content.members.concat(content.refer));
+		const refered_members = members_id_list(content.refer);
+		
 
         if ((all_members.indexOf(idol1) >= 0 || !idol1)
 			 && (all_members.indexOf(idol2) >= 0 || !idol2)
 			 && (content.type.indexOf(type) >= 0 || !type)
 			 && (content.group.indexOf(group) >= 0 || !group)){
+
+				//指定されたアイドルが全員言及のみの場合はリストに入れない
+				if (refered_members.indexOf(idol1) >= 0 && refered_members.indexOf(idol2) >= 0){
+					continue;
+				}
+
+			//リストに追加	
             filtered_contents.push(content);
+
             //URLデータがあるものはリンクをはる
             let view = content_link(content, 'view');
 
             //フィルター対象アイドルの名前を強調
-
             function get_decorated_members_str(members, idol1, idol2){
                 let members_str = '';
                 for (let member of members){
