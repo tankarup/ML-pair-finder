@@ -41,7 +41,10 @@ function getJsonp_GAS() {
             get_4koma_Jsonp_GAS();
 
             
-        }
+        },
+		error: function () {
+			console.log('game data loading error');
+		}
     });
 }
 function get_4koma_Jsonp_GAS() {
@@ -96,7 +99,10 @@ function get_4koma_Jsonp_GAS() {
 			document.getElementById('loading_text').innerText = '';
 			//document.getElementById('loading').style.display="none";
 
-        }
+        },
+		error: function () {
+			console.log('4koma data loading error');
+		}
     });
 }
 function show_uncouple(){
@@ -456,18 +462,21 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
     let filtered_contents = [];
     for (let content of  ml_members_data){
         const all_members = members_id_list(content.members.concat(content.refer));
-		const refered_members = members_id_list(content.refer);
+		const refered_members = members_id_list([].concat(content.refer));
 		
+
 
         if ((all_members.indexOf(idol1) >= 0 || !idol1)
 			 && (all_members.indexOf(idol2) >= 0 || !idol2)
 			 && (content.type.indexOf(type) >= 0 || !type)
 			 && (content.group.indexOf(group) >= 0 || !group)){
 
+				
 				//指定されたアイドルが全員言及のみの場合はリストに入れない
 				if (refered_members.indexOf(idol1) >= 0 && refered_members.indexOf(idol2) >= 0){
 					continue;
 				}
+				
 
 			//リストに追加	
             filtered_contents.push(content);
@@ -515,11 +524,13 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 
             //-----
 
-            
+
             //-----
         }
+		console.log("testtest");
 
     }
+
     /*
     html += `
         </tbody>
