@@ -83,7 +83,7 @@ function get_4koma_Jsonp_GAS() {
                     title: story['タイトル'],
                     members: idol,
                     url: story['URL'],
-                    view: 'ナビ＞コミック＞4コマ, Twitter',
+                    view: 'ナビ＞コミック＞4コマ ',
                     mv: '',
                 });
 
