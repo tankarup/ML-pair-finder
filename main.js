@@ -64,17 +64,16 @@ function get_4koma_Jsonp_GAS() {
                 //アイドルを追加
                 for (let j=0; j<7; j++){
                     const key = '登場人物' + (j+1);
-                    if (story[key].length < 1) continue;
-                    idol.push(story[key]);
+					idol = idol.concat(story[key].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}));
+                    //idol = idol.concat(story[key].split(/\s*[,、]\s*/));//カンマ区切りで複数のアイドルに分割し、名前の前後に入っている空白は削除する
                 }
-                //社長、プロデューサー、そらさんを追加
-                const staffs = ['社長', 'プロデューサー', 'そら'];
-                for (let staff of staffs){
-                    if (story[staff] != ''){
-                        idol.push(staff);
-                    }
-                }
-                idol = idol.map(function(item){return member_dic(item)});
+				//ちょい役アイドルを追加
+				let referreds = story['言及'].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());});//カンマ区切りで複数のアイドルに分割し、名前の前後に入っている空白は削除する
+				
+				//名前を規格化
+                //idol = idol.map(function(item){return member_dic(item)});
+				//referreds= referreds.map(function(item){return member_dic(item)});
+
                 yonkoma_list.push({
                     type: '4コマ',
                     group: story['シリーズ'],
@@ -85,6 +84,7 @@ function get_4koma_Jsonp_GAS() {
                     url: story['URL'],
                     view: 'ナビ＞コミック＞4コマ, Twitter',
                     mv: '',
+					refer: referreds,
                 });
 
             }
