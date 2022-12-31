@@ -38,7 +38,7 @@ function getJsonp_GAS() {
             const idol2 = getParam('idol2');
 
             update_content(idol1, idol2);
-            //get_4koma_Jsonp_GAS();
+            get_4koma_Jsonp_GAS();
 
             
         },
