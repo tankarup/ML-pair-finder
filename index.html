@@ -5,13 +5,21 @@
 	<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>ミリシタ カプ検索</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <script src="https://code.highcharts.com/highcharts.js"></script>
 
+	
+
     <link rel="stylesheet" href="https://tankarup.github.io/million.css">
-    <style>
+  
+	<style>
         #whole {
             display: flex;
             flex-wrap: wrap;
@@ -88,27 +96,52 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-primary bg-primary text-light p-0 sticky-top">
-        <h1 class="h3">ミリシタ カプ検索<div id="loading"><div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><span id="loading_text">Loading Game data...</span></div></h1>
-		
-        <div >
-            <select id="type">
-                <option value="">大分類</option>
-            </select>
-            <select id="group">
-                <option value="">中分類</option>
-            </select>
-            <select id="idols1">
-                <option value="">登場人物1</option>
-            </select>
-            <select id="idols2">
-                <option value="">登場人物2</option>
-            </select>
-        </div>
 
-    </nav>
-    
 
+<nav class="navbar navbar-primary bg-primary text-light p-0 sticky-top">
+	<h1 class="h3">ミリシタ カプ検索
+		<div id="loading">
+			<div class="dot dot1"></div>
+			<div class="dot dot2"></div>
+			<div class="dot dot3"></div><span id="loading_text">Loading Game data...</span>
+		</div>
+	</h1>
+
+
+
+
+	<div>
+		<select id="type">
+			<option value="">大分類</option>
+		</select>
+		<select id="group">
+			<option value="">中分類</option>
+		</select>
+		<select id="idols1">
+			<option value="">登場人物1</option>
+		</select>
+		<select id="idols2">
+			<option value="">登場人物2</option>
+		</select>
+	</div>
+
+</nav>
+
+
+<div id="pairs">
+<!--
+	<ul class="pagination pagination-sm justify-content-center" style="position: fixed; top: 5px; left: 50%; z-index: 2000; ">
+		<li class="page-item">
+		  <a class="page-link" href="#" v-on:click="move_page(-1)">＜</a>
+	  </li>
+	  <li class="page-item" style="font-weight: bold;">
+		  <a class="page-link" href="#"><span id="current_page">{{current_page}}/{{max_page}}</span></a>
+	  </li>
+	  <li class="page-item">
+		  <a class="page-link" href="#" v-on:click="move_page(1)">＞</a>
+	  </li>
+  </ul>
+-->
     <table class="table table-sm table-striped" id="pairs-table">
         <thead class="thead-dark">
             <tr>
@@ -122,8 +155,19 @@
             </tr>
         </thead>
         <tbody id="pairs-table-body">
+			<tr v-for="(item, index) in display_items">
+				<td>{{item.index}}</td>
+				<td>{{item.type}}</td>
+				<td>{{item.group}}</td>
+				<td v-html="item.title"></td>
+				<td v-html="item.members"></td>
+				<td v-html="item.referred_members"></td>
+				<td v-html="item.view"></td>
+
+			</tr>
         </tbody>
     </table>
+</div>
         <!-- // -->
 	<div id="count_graph">
 		<figure class="highcharts-figure">
@@ -149,14 +193,16 @@
 			<li>バグ報告や機能改善案などは<a href="https://github.com/tankarup/">Github</a>か<a href="https://twitter.com/tankaru">Twitter</a>へ</li>
         </ul>
     </div>
-    <script src="main.js"></script>
+
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    <script
-    src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+	
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://unpkg.com/vuejs-paginate-next@latest/dist/vuejs-paginate-next.umd.js"></script>
+	
+	<script src="main.js"></script>
 </body>
 
 </html>

@@ -38,7 +38,7 @@ function getJsonp_GAS() {
             const idol2 = getParam('idol2');
 
             update_content(idol1, idol2);
-            get_4koma_Jsonp_GAS();
+            //get_4koma_Jsonp_GAS();
 
             
         },
@@ -163,6 +163,7 @@ function load_data(){
 }
 
 function idol_changed(){
+	console.log('idol_changed')
 	document.getElementById('loading').style.visibility="visible";
 	update_url();
 	//ローディングを表示するためにちょっと待つ
@@ -446,19 +447,10 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 
     let html = '';
     let index = 1;
-    /*
-    html += '<table class="table table-sm table-striped">'; //
-    html += `<thead class="thead-dark">
-                <tr>
-                    <th>種類</th>
-                    <th>イベント</th>
-                    <th>タイトル</th>
-                    <th>メンバー</th>
-                    <th>アクセス</th>
-                </tr>
-            </thead>
-            <tbody class="">`;
-    */
+
+	//表示内容をクリア
+	vue_pairs.reset();
+
     let filtered_contents = [];
     for (let content of  ml_members_data){
         const all_members = members_id_list(content.members.concat(content.refer));
@@ -509,7 +501,7 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 
 
 
-
+			/*
             html += `
             <tr>
                 <td>${index}</td>
@@ -520,26 +512,28 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
                 <td>${referred_members_str}</td>
                 <td style="font-size:smaller;">${view}</td>
             </tr>`;
+			*/
+			vue_pairs.items.push({
+				index: index,
+				type: content.type,
+				group: content.group,
+				title: title,
+				members: members_str,
+				referred_members: referred_members_str,
+				view: view,
+
+			});
             index += 1;
 
-            //-----
-
-
-            //-----
         }
-		console.log("testtest");
+
 
     }
-
-    /*
-    html += `
-        </tbody>
-    </table>`;
-    document.getElementById('whole').innerHTML = html;
-    */
+	/*
 	let tbody = document.getElementById('pairs-table-body');
 	tbody.innerHTML = '';
 	tbody.insertAdjacentHTML('beforeend', html);
+	*/
 	update_graph(filtered_contents);
 	shown_contents = filtered_contents;
 	show_additional_information(idol1, idol2);
@@ -880,3 +874,39 @@ for (let idol_line of idol_lines){
 	index += 1;
 
 }
+
+
+const vue_pairs = Vue.createApp({
+	data() {
+	  return {
+		items: [
+		],
+		display_per_page: 10000,
+		current_page: 1,
+		min_page:1,
+	  }
+	},
+	computed: {
+		display_items(){
+			const start_index = (this.current_page-1)*this.display_per_page;
+			return this.items.slice(start_index, start_index + this.display_per_page);
+		},
+		max_page(){
+			return Math.ceil(this.items.length/this.display_per_page);
+		},
+	},
+	methods: {
+		reset(){
+			this.items = [];
+			this.current_page = 1;
+		},
+		move_page(move){
+			this.current_page += move;
+			if (this.current_page < this.min_page) this.current_page = this.min_page;
+			if (this.current_page > this.max_page) this.current_page = this.max_page;			
+		},
+	},
+}).mount('#pairs');
+
+
+  
