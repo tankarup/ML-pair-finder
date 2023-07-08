@@ -116,6 +116,7 @@ class DataManager {
 	}
 	loadDataFromStorage(){
 		const item = localStorage.getItem('ml_members');
+		document.getElementById('loading_text').innerText = '';
 		if (item) {
 			this.allData = JSON.parse(item);
 			this.shownData = this.allData;
@@ -351,7 +352,7 @@ function create_group_menu(){
 	for (const item of ml_members_data){
 		if (type === item.type || type === '') group_menus.push(item.group);
 	}
-	group_menus = Array.from(new Set(group_menus));
+	group_menus = Array.from(new Set(group_menus)).filter(Boolean);
 
     let options_html = '';
     for (let type of group_menus){
