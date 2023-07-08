@@ -5,106 +5,153 @@ let chart;
 let shown_contents;
 let to_update_group_menu = false;
 
+class DataManager {
+	allData =[];
+	shownData = [];
+	constructor(){
+		console.log('Data manager constructed');
+		document.getElementById('refresh_data_button').addEventListener('click', () => {
+			this.loadDataFromServer();
+		});
+	}
+	loadData(){
+		if(!this.loadDataFromStorage()){
+			this.loadDataFromServer();
+		}
+	}
+	loadPairData(){
+		document.getElementById('loading_text').innerText = 'Loading Game data...';
+		document.getElementById('loading').style.visibility="visible";
+		$.ajax({
+			type: 'GET',
+			url: 'https://script.google.com/macros/s/AKfycbwLXU0EfApHHon_kMdD2H8KCALCKiQlqjnu6hr7HfBEEYtsiMSPhpDepg/exec',
+			dataType: 'jsonp',
+			jsonpCallback: 'jsondata',
+			success:  (json) => {//アロー関数にしないと、この中でthisが使えない　https://pisuke-code.com/javascript-class-this-in-callback/
+				
+				this.allData = this.allData.concat(process_raw_data(json));
+				this.shownData = this.allData;
+
+				ml_members_data = this.allData;
+				shown_contents = ml_members_data;
+
+				this.saveData();
+
+				init_menu();
+				const idol1 = getParam('idol1');
+				const idol2 = getParam('idol2');
+	
+				update_content(idol1, idol2);
+
+				this.load4komaData();
+	
+				
+			},
+			error: function () {
+				console.log('game data loading error');
+			}
+		});
+	}
+	load4komaData(){
+		document.getElementById('loading_text').innerText = 'Loading 4koma...';
+		document.getElementById('loading').style.visibility="visible";
+		$.ajax({
+			type: 'GET',
+			url: 'https://script.google.com/macros/s/AKfycby9pjvZZlvKwKp23P8DRyzoXKkR4BWVwW9XHIHElP1M7X4NHaHe5bW2kosqZZ92F4_S/exec',
+			dataType: 'jsonp',
+			jsonpCallback: 'jsondata',
+			success: (json) => {
+				let yonkoma_list = [];
+				for (let i = 0; i < json.length; i++){
+					const story = json[i];
+					if (story['タイトル'].length < 1) continue;
+					let idol = [];
+					//アイドルを追加
+					for (let j=0; j<7; j++){
+						const key = '登場人物' + (j+1);
+						idol = idol.concat(story[key].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}));
+						//idol = idol.concat(story[key].split(/\s*[,、]\s*/));//カンマ区切りで複数のアイドルに分割し、名前の前後に入っている空白は削除する
+					}
+					//ちょい役アイドルを追加
+					let referreds = story['言及'].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());});//カンマ区切りで複数のアイドルに分割し、名前の前後に入っている空白は削除する
+					
+					//名前を規格化
+					//idol = idol.map(function(item){return member_dic(item)});
+					//referreds= referreds.map(function(item){return member_dic(item)});
+	
+					yonkoma_list.push({
+						type: '4コマ',
+						group: story['シリーズ'],
+						section: '',
+						subtitle: '',
+						title: story['タイトル'],
+						members: idol,
+						url: story['URL'],
+						view: 'ナビ＞コミック＞4コマ ',
+						mv: '',
+						refer: referreds,
+					});
+	
+				}
+				this.allData = this.allData.concat(yonkoma_list);
+				this.shownData = this.allData;
+				ml_members_data = this.allData;
+				shown_contents = this.allData;
+				//show_uncouple();
+				//save_data(ml_members_data);
+				this.saveData();
+				init_menu();
+				const idol1 = getParam('idol1');
+				const idol2 = getParam('idol2');
+				update_content(idol1, idol2);
+	
+				document.getElementById('loading_text').innerText = '';
+				//document.getElementById('loading').style.display="none";
+	
+			},
+			error: function () {
+				console.log('4koma data loading error');
+			}
+		});
+	}
+	loadDataFromStorage(){
+		const item = localStorage.getItem('ml_members');
+		if (item) {
+			this.allData = JSON.parse(item);
+			this.shownData = this.allData;
+
+			ml_members_data = this.allData;
+			shown_contents = this.allData;
+
+			init_menu();
+			const idol1 = getParam('idol1');
+			const idol2 = getParam('idol2');
+
+			update_content(idol1, idol2);
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+	loadDataFromServer(){
+		this.allData = [];
+		this.loadPairData();
+
+	}
+	saveData(){
+		localStorage.setItem('ml_members', JSON.stringify(this.allData));
+	}
+}
+const dataManager = new DataManager();
+
 // ページ読み込み後の処理
 window.onload = function () {
-    // 【main-script】 を実行
 
-    getJsonp_GAS();
-    
-    /*
-    const data = load_data();
-    ml_members_data = process_raw_data(data);
-    init_menu();
-    update_content('', '');
-    */
+	dataManager.loadData();
+
 }
 
-// 【main-script】 スプレッドシート内の記述をjsonデータとして読み込み html 内へ入れ込む
-function getJsonp_GAS() {
-	document.getElementById('loading_text').innerText = 'Loading Game data...';
-	document.getElementById('loading').style.visibility="visible";
-    $.ajax({
-        type: 'GET',
-        url: 'https://script.google.com/macros/s/AKfycbwLXU0EfApHHon_kMdD2H8KCALCKiQlqjnu6hr7HfBEEYtsiMSPhpDepg/exec',
-        dataType: 'jsonp',
-        jsonpCallback: 'jsondata',
-        success: function (json) {
-            
-            ml_members_data = ml_members_data.concat(process_raw_data(json));
-			shown_contents = ml_members_data;
-            save_data(ml_members_data);
-            init_menu();
-            const idol1 = getParam('idol1');
-            const idol2 = getParam('idol2');
-
-            update_content(idol1, idol2);
-            get_4koma_Jsonp_GAS();
-
-            
-        },
-		error: function () {
-			console.log('game data loading error');
-		}
-    });
-}
-function get_4koma_Jsonp_GAS() {
-	document.getElementById('loading_text').innerText = 'Loading 4koma...';
-	document.getElementById('loading').style.visibility="visible";
-    $.ajax({
-        type: 'GET',
-        url: 'https://script.google.com/macros/s/AKfycby9pjvZZlvKwKp23P8DRyzoXKkR4BWVwW9XHIHElP1M7X4NHaHe5bW2kosqZZ92F4_S/exec',
-        dataType: 'jsonp',
-        jsonpCallback: 'jsondata',
-        success: function (json) {
-            let yonkoma_list = [];
-            for (let i = 0; i < json.length; i++){
-                const story = json[i];
-                if (story['タイトル'].length < 1) continue;
-                let idol = [];
-                //アイドルを追加
-                for (let j=0; j<7; j++){
-                    const key = '登場人物' + (j+1);
-					idol = idol.concat(story[key].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}));
-                    //idol = idol.concat(story[key].split(/\s*[,、]\s*/));//カンマ区切りで複数のアイドルに分割し、名前の前後に入っている空白は削除する
-                }
-				//ちょい役アイドルを追加
-				let referreds = story['言及'].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());});//カンマ区切りで複数のアイドルに分割し、名前の前後に入っている空白は削除する
-				
-				//名前を規格化
-                //idol = idol.map(function(item){return member_dic(item)});
-				//referreds= referreds.map(function(item){return member_dic(item)});
-
-                yonkoma_list.push({
-                    type: '4コマ',
-                    group: story['シリーズ'],
-                    section: '',
-                    subtitle: '',
-                    title: story['タイトル'],
-                    members: idol,
-                    url: story['URL'],
-                    view: 'ナビ＞コミック＞4コマ ',
-                    mv: '',
-					refer: referreds,
-                });
-
-            }
-            ml_members_data = ml_members_data.concat(yonkoma_list);
-			//show_uncouple();
-            //save_data(ml_members_data);
-            init_menu();
-            const idol1 = getParam('idol1');
-            const idol2 = getParam('idol2');
-            update_content(idol1, idol2);
-
-			document.getElementById('loading_text').innerText = '';
-			//document.getElementById('loading').style.display="none";
-
-        },
-		error: function () {
-			console.log('4koma data loading error');
-		}
-    });
-}
 function show_uncouple(){
 	/* カプ数
 	cp_count = {
@@ -219,6 +266,7 @@ document.getElementById('idols2').addEventListener('change', function(){
 document.getElementById('include_all_idols').addEventListener('change', function(){
 	update_graph(shown_contents);
 });
+
 /*
 名前が「びっきー(我那覇響)」という形式で登録されている場合、びっきー：役名、我那覇響：アイドル名、として扱い、
 {
