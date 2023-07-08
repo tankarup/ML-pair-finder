@@ -346,10 +346,15 @@ function create_type_menu(){
     document.getElementById('type').innerHTML = '<option value="">大分類</option>' + options_html;
 }
 function create_group_menu(){
-	const type_list = get_category_list(shown_contents, 'group');
-	console.log(type_list);
+	let group_menus = [];
+	const type = document.getElementById('type').value;
+	for (const item of ml_members_data){
+		if (type === item.type || type === '') group_menus.push(item.group);
+	}
+	group_menus = Array.from(new Set(group_menus));
+
     let options_html = '';
-    for (let type of type_list){
+    for (let type of group_menus){
         options_html += `<option value="${type}">${type}</option>`;
     }
     document.getElementById('group').innerHTML = '<option value="">中分類</option>' + options_html;
@@ -856,14 +861,14 @@ const idol_names = `春香	天海春香
 星梨花	箱崎星梨花	
 茜	野々原茜	
 杏奈	望月杏奈	
-ロコ	ロコ	路子
+ロコ	路子	伴田路子
 百合子	七尾百合子	
 紗代子	高山紗代子	
 亜利沙	松田亜利沙	
 海美	高坂海美	
 育	中谷育	
 朋花	天空橋朋花	
-エミリー	エミリー	エミリースチュアート	エミリー スチュアート	エミリー　スチュアート
+エミリー	エミリースチュアート	エミリー スチュアート	エミリー　スチュアート	エミリー・スチュアート
 志保	北沢志保	
 歩	舞浜歩	
 ひなた	木下ひなた	
