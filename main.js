@@ -567,6 +567,7 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
                 <td style="font-size:smaller;">${view}</td>
             </tr>`;
 			*/
+			if (index >1000) continue;
 			vue_pairs.items.push({
 				index: index,
 				type: content.type,
@@ -578,6 +579,7 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 
 			});
             index += 1;
+			
 
         }
 
