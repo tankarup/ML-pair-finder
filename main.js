@@ -5,6 +5,9 @@ let chart;
 let shown_contents;
 let to_update_group_menu = false;
 
+//アイドル選択メニュー
+let idol_menu1, idol_menu2;
+
 class DataManager {
 	allData =[];
 	shownData = [];
@@ -216,8 +219,8 @@ function idol_changed(){
 	update_url();
 	//ローディングを表示するためにちょっと待つ
 	setTimeout(() => {
-		const idol1 = document.getElementById('idols1').value;
-		const idol2 = document.getElementById('idols2').value;
+		const idol1 = idol_menu1.selected;//document.getElementById('idols1').value;
+		const idol2 = idol_menu2.selected;//document.getElementById('idols2').value;
 		const type = document.getElementById('type').value;
 		const group = document.getElementById('group').value;
 		update_content(idol1, idol2, type, group);
@@ -229,8 +232,8 @@ function idol_changed(){
 
 //urlに選択したメニュー項目を追加
 function update_url(){
-	const idol1 = document.getElementById('idols1').value;
-	const idol2 = document.getElementById('idols2').value;
+	const idol1 = idol_menu1.selected;//document.getElementById('idols1').value;
+	const idol2 = idol_menu2.selected;//document.getElementById('idols2').value;
 	const type = document.getElementById('type').value;
 	const group = document.getElementById('group').value;
 
@@ -258,12 +261,14 @@ document.getElementById('type').addEventListener('change', function(){
 document.getElementById('group').addEventListener('change', function(){
     idol_changed();
 });
+/*
 document.getElementById('idols1').addEventListener('change', function(){
     idol_changed();
 });
 document.getElementById('idols2').addEventListener('change', function(){
     idol_changed();
 });
+*/
 document.getElementById('include_all_idols').addEventListener('change', function(){
 	update_graph(shown_contents);
 });
@@ -406,11 +411,20 @@ function init_menu(){
     //アイドルフィルターメニュー作成
     let options_html = '';
     for (let idol of idol_list){
-        options_html += `<option value="${idol}">${idol}</option>`;
+        //options_html += `<option value="${idol}">${idol}</option>`;
     }
 
-    document.getElementById('idols1').innerHTML = '<option value="">登場人物1</option>' + options_html;
-    document.getElementById('idols2').innerHTML = '<option value="">登場人物2</option>' + options_html;
+    //document.getElementById('idols1').innerHTML = '<option value="">登場人物1</option>' + options_html;
+    //document.getElementById('idols2').innerHTML = '<option value="">登場人物2</option>' + options_html;
+
+	idol_menu1 = new iconMenu('idol_selector1');
+	idol_menu2 = new iconMenu('idol_selector2');
+	for (let idol of idol_list){
+		idol_menu1.addOption(idol);
+		idol_menu2.addOption(idol);
+		
+	}
+
 
     create_type_menu();
 	create_group_menu();
@@ -494,8 +508,8 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
     const idol2 = idol2_name ? idol2_name : '';
     const type = type_str ? type_str : '';
 	const group = group_str ? group_str : '';
-    document.getElementById('idols1').value = idol1;
-    document.getElementById('idols2').value = idol2;
+    idol_menu1.select(idol1);
+    idol_menu2.select(idol2);
     document.getElementById('type').value = type;
 	document.getElementById('group').value = group;
 
@@ -744,6 +758,7 @@ function idol_name_list(contents){
 }
 
 function update_graph(contents){
+	console.log('function update_graph')
     while(chart.series.length > 0)
         chart.series[0].remove(true);
 

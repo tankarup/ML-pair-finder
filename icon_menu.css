@@ -1,0 +1,29 @@
+.dropdown_container{
+    display: inline-block;
+    position: relative;
+}
+
+.popup{
+    position: absolute;
+	top: 100%;
+
+
+    background-color: #fff;
+	color: black;
+	border: thin solid #aaa;
+ 
+    display: none;
+
+
+	box-shadow: 10px 10px 15px 0px rgba(0,0,0,.7);
+	/*max-height: 500px;
+	max-width: 150px;*/
+
+}
+
+.left0 {
+	left: 0px;
+}
+.right0 {
+	right:0px;
+}
