@@ -70,7 +70,7 @@ class DataManager {
 					if (story['タイトル'].length < 1) continue;
 					let idol = [];
 					//アイドルを追加
-					for (let j=0; j<7; j++){
+					for (let j=0; j<8; j++){
 						const key = '登場人物' + (j+1);
 						idol = idol.concat(story[key].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}));
 						//idol = idol.concat(story[key].split(/\s*[,、]\s*/));//カンマ区切りで複数のアイドルに分割し、名前の前後に入っている空白は削除する
@@ -912,6 +912,7 @@ const idol_names = `春香	天海春香
 社長	高木順二朗	高木社長
 げき子	劇場の魂	劇子
 黒井社長	黒井崇男	
+でんでんむすくん	でんでんむす君	
 `;
 
 let idol_info = {};
