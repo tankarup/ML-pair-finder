@@ -181,9 +181,9 @@ class iconMenu {
 		this.window_elem.appendChild(tempEl.firstElementChild);
 
 		const elem = document.getElementById(`${this.elem_id}_${value}`);
-		console.log(elem)
+		//console.log(elem)
 		elem.addEventListener('click', () => {
-			console.log(value);
+			//console.log(value);
 			this.select(value);
 		})
 

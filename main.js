@@ -81,6 +81,9 @@ class DataManager {
 					//名前を規格化
 					//idol = idol.map(function(item){return member_dic(item)});
 					//referreds= referreds.map(function(item){return member_dic(item)});
+
+					const date = new Date(story['公開日']);
+					const dateString = 
 	
 					yonkoma_list.push({
 						type: '4コマ',
@@ -93,6 +96,7 @@ class DataManager {
 						view: 'ナビ＞コミック＞4コマ ',
 						mv: '',
 						refer: referreds,
+						date: Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString("ja-JP", {year: "numeric",month: "2-digit",day: "2-digit"}), //無効な日付の場合は空文字にする,
 					});
 	
 				}
@@ -314,6 +318,9 @@ function process_raw_data(json){
 
         }
 
+		const date = new Date(event['開始']);
+
+
         processed.push({
             type: event['種類'],
             group: event['グループ'],
@@ -325,7 +332,9 @@ function process_raw_data(json){
             view: event['閲覧'],
             mv: event['MV'],
             refer: event['言及のみ'].split(/[、,，\n]/).filter(v => v).map(function(item){return member_dic(item.trim());}),
+			date: Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString("ja-JP", {year: "numeric",month: "2-digit",day: "2-digit"}), //無効な日付の場合は空文字にする
         });
+
     }
     return processed;
 }
@@ -564,8 +573,8 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 
 
             let title = content.title;
-            if (String(content.section).length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${', '+content.section}</span>`;
-            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${', '+content.subtitle}</span>`;
+            if (String(content.section).length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${'　'+content.section}</span>`;
+            if (content.subtitle.length > 0) title += `<span style="font-size: smaller; font-style: italic;"> ${'　'+content.subtitle}</span>`;
 
 
 
@@ -590,6 +599,7 @@ function update_content(idol1_name, idol2_name, type_str, group_str){
 				members: members_str,
 				referred_members: referred_members_str,
 				view: view,
+				date: content.date,
 
 			});
             index += 1;
@@ -758,7 +768,6 @@ function idol_name_list(contents){
 }
 
 function update_graph(contents){
-	console.log('function update_graph')
     while(chart.series.length > 0)
         chart.series[0].remove(true);
 
@@ -914,6 +923,10 @@ const idol_names = `春香	天海春香
 黒井社長	黒井崇男	
 でんでんむすくん	でんでんむす君	
 いぬ美	イヌ美
+源P	源Ｐ
+ハリ子	はり子
+例の星	スタナビ	スタナビ君	スターナビゲーター
+謎の猫	例の猫
 `;
 
 let idol_info = {};
@@ -957,15 +970,34 @@ const vue_pairs = Vue.createApp({
 		display_per_page: 10000,
 		current_page: 1,
 		min_page:1,
+		do_sort: false,
 	  }
 	},
 	computed: {
 		display_items(){
 			const start_index = (this.current_page-1)*this.display_per_page;
-			return this.items.slice(start_index, start_index + this.display_per_page);
+			return this.sorted_items.slice(start_index, start_index + this.display_per_page);
 		},
 		max_page(){
 			return Math.ceil(this.items.length/this.display_per_page);
+		},
+		sorted_items(){
+			if (!this.do_sort) return this.items;
+
+			return this.items.toSorted((a,b) => {
+				//日付が入っていなかったら後ろにまわす
+				if (!a.date && b.date) return 1;
+				if(a.date && !b.date) return -1;
+				if (!a.date && !b.date) return 0; 
+				//ソート
+				if (a.date > b.date){
+					return 1;
+				} else if (a.date < b.date){
+					return -1;
+				} else {
+					return 0;
+				}
+			});
 		},
 	},
 	methods: {
@@ -977,6 +1009,9 @@ const vue_pairs = Vue.createApp({
 			this.current_page += move;
 			if (this.current_page < this.min_page) this.current_page = this.min_page;
 			if (this.current_page > this.max_page) this.current_page = this.max_page;			
+		},
+		toggle_sort(){
+			this.do_sort = !this.do_sort;
 		},
 	},
 }).mount('#pairs');
