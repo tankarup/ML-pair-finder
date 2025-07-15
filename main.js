@@ -27,7 +27,7 @@ class DataManager {
 		document.getElementById('loading').style.visibility="visible";
 		$.ajax({
 			type: 'GET',
-			url: 'https://script.google.com/macros/s/AKfycbwLXU0EfApHHon_kMdD2H8KCALCKiQlqjnu6hr7HfBEEYtsiMSPhpDepg/exec',
+			url: 'https://script.google.com/macros/s/AKfycbzdqDidOIsYjC08IbcSfw574OHwwEix7QFKCtaJr_LmNQ4tdgCtsemqdhjuqTs97ZLLWw/exec',
 			dataType: 'jsonp',
 			jsonpCallback: 'jsondata',
 			success:  (json) => {//アロー関数にしないと、この中でthisが使えない　https://pisuke-code.com/javascript-class-this-in-callback/
