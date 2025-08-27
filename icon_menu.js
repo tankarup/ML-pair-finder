@@ -256,8 +256,8 @@ const default_idols_text = `春香	haruka	#e22b30	1
 ジュニオール	junior	#777175	0.8
 チュパカブラ	chupacabra	#C1CE49	0.8
 でんでんむすくん	dendenmusukun	#4A3B2E	0.8
-謎の猫	nazononeko	#857575	0.8
-例の星	reinohoshi	#FFE8B6	0.8
+マスコットのネコ	nazononeko	#857575	0.8
+例の星☆スタナビくん	reinohoshi	#FFE8B6	0.8
 ハム蔵	hamzo	#F1BE85	0.8
 いぬ美	inumi	#5A371D	0.8
 ハリ子	hariko	#94929F	0.8
